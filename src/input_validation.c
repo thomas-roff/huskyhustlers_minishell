@@ -1,29 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   input_validation.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/25 18:07:57 by thblack-          #+#    #+#             */
-/*   Updated: 2025/10/28 12:42:29 by thblack-         ###   ########.fr       */
+/*   Created: 2025/10/06 17:58:39 by thblack-          #+#    #+#             */
+/*   Updated: 2025/10/28 11:31:08 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#include "../inc/minishell.h"
 
-# include "../libft/inc/libft.h"
+int	input_check(char *args)
+{
+	if 
+	return (OK);
+}
 
-// CODES FOR ERROR TRACKING
-// SUCCESSFUL EXECUTION
-# define OK 1
-// UNSUCCEFUL EXECUTION
-# define KO 0
+int	main(int argc, char **argv)
+{
+	int	i;
 
-// MINISHELL
-
-typedef enum e_error {
-} error;
-
-#endif
+	i = 1;
+	if (argc < 1)
+		return (EXIT_SUCCESS);
+	while (i < argc)
+		if (input_check(argv[i++]) < 0)
+			return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
+}
