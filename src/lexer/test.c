@@ -1,32 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   input_validation.c                                 :+:      :+:    :+:   */
+/*   test.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/06 17:58:39 by thblack-          #+#    #+#             */
-/*   Updated: 2025/10/28 11:31:08 by thblack-         ###   ########.fr       */
+/*   Created: 2025/10/30 12:14:55 by thblack-          #+#    #+#             */
+/*   Updated: 2025/10/30 12:14:59 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/minishell.h"
+#include <stdio.h>
 
-int	input_check(char *args)
+#include <readline/readline.h>
+#include <readline/history.h>
+
+int main()
 {
-	if 
-	return (OK);
-}
+        char *inpt;
 
-int	main(int argc, char **argv)
-{
-	int	i;
+        int i = 0;
 
-	i = 1;
-	if (argc < 1)
-		return (EXIT_SUCCESS);
-	while (i < argc)
-		if (input_check(argv[i++]) < 0)
-			return (EXIT_FAILURE);
-	return (EXIT_SUCCESS);
+        while ( i < 10 )
+        {
+                inpt = readline("Enter text: ");
+                add_history(inpt);
+                printf("%s", inpt);
+                printf("\n");
+                ++i;
+        }
+
+        return 0;
+
 }

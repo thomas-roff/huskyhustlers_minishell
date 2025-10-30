@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/15 10:23:38 by thblack-          #+#    #+#             */
-/*   Updated: 2025/10/15 18:27:15 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/10/30 18:27:28 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,23 +68,4 @@ int	vec_copy(t_vec *dst, t_vec *src)
 		(uint8_t *)src->data, n * dst->elem_size);
 	dst->len += n;
 	return (1);
-}
-
-void	vec_print(const t_vec *src)
-{
-	size_t	i;
-
-	i = 0;
-	if (!src)
-		return ;
-	ft_printf("VECTOR DATA\nalloc_size: %u elem_size: %u len: %u\n",
-		(uint32_t)src->alloc_size, (uint32_t)src->elem_size,
-		(uint32_t)src->len);
-	if (!src->data)
-		return ;
-	while (i < src->len)
-	{
-		ft_printf("Data[%u]: %d\n", (uint32_t)i, ((int *)src->data)[i]);
-		i++;
-	}
 }

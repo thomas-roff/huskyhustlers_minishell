@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/15 12:10:11 by thblack-          #+#    #+#             */
-/*   Updated: 2025/10/15 18:26:04 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/10/30 19:22:01 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int	vec_pop(void *dst, t_vec *src)
 void	*vec_get(t_vec *src, size_t index)
 {
 	if (!src || !src->data || src->len == 0 || src->elem_size == 0
-		|| index > src->len)
+		|| index >= src->len)
 		return (NULL);
 	else
 		return (&src->data[index * src->elem_size]);

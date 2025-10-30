@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 14:56:47 by thblack-          #+#    #+#             */
-/*   Updated: 2025/10/29 16:09:51 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/10/30 18:57:57 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,46 +20,62 @@ int	ft_ismetachar(int c)
 	return (0);
 }
 
-int	ft_isparenthesis(int c, t_cmd *cmd)
+int	ft_isparenthesis(int c, t_token *token)
 {
 	if (c == '(')
-		cmd->ctrl = OPEN_BRACKET;
+		token->ctrl = OPEN;
 	else if (c == '(')
-		cmd->ctrl = CLOSE_BRACKET;
+		token->ctrl = CLOSE;
 	else
 		return (0);
 	return (1);
 }
 
-int	ft_iscontrol(char *str, t_cmd *cmd)
+int	ft_iscontrol(char *str, t_token *token)
 {
 	if (str[0] == '\n')
-		cmd->ctrl = NEWLINE;
+		token->ctrl = NEWLINE;
 	else if (str[0] == '|')
 	{
 		if (str[1] == '|')
-			cmd->ctrl = DBLPIPE;
+			token->ctrl = DBLPIPE;
 		else if (str[1] == '&')
-			cmd->ctrl = PIPEAMP;
+			token->ctrl = PIPEAMP;
 		else
-			cmd->ctrl = PIPE;
+			token->ctrl = PIPE;
 	}
 	else if (str[0] == ';')
 	{
 		if (str[1] == '&')
-			cmd->ctrl = COLONAMP;
+			token->ctrl = COLONAMP;
 		else if (str[1] == ';' && str[2] == '&')
-			cmd->ctrl = DBLCOLONAMP;
+			token->ctrl = DBLCOLONAMP;
 		else if (str[1] == ';')
-			cmd->ctrl = DBLCOLON;
+			token->ctrl = DBLCOLON;
 		else
-			cmd->ctrl = COLON;
+			token->ctrl = COLON;
 	}
 	else
-		return (ft_isparenthesis(str[0], cmd));
+		return (ft_isparenthesis(str[0], token));
 	return (1);
 }
 
-int	ft_isredirect(char *str, t_cmd cmd)
+int ft_isbracket(int c, t_token *token)
 {
+	if (c == '\\' || c == '"' || c == '\'')
+	{
+		if (c == '(')
+			token->ctrl = OPEN;
+		if (c == '(')
+			token->ctrl = CLOSE;
+		token->type = TOK_QUOT;
+		token->wrap_i++;
+		return (1);
+	}
+	return (0);
+}
+
+int	ft_isredirect(char *str, t_token token)
+{
+	return (1);
 }

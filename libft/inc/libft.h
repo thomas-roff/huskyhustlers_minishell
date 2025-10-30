@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:32:41 by thblack-          #+#    #+#             */
-/*   Updated: 2025/10/27 16:57:03 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/10/30 16:19:22 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ int		vec_new(t_vec *dst, size_t init_len, size_t elem_size);
 void	vec_free(t_vec *src);
 int		vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
 int		vec_copy(t_vec *dst, t_vec *src);
-void	vec_print(const t_vec *src);
+void	vec_printf(const t_vec *src, char printf_flag);
 int		vec_resize(t_vec *src, size_t target_len);
 int		vec_push(t_vec *dst, void *src);
 int		vec_pop(void *dst, t_vec *src);
