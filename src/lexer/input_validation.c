@@ -12,42 +12,129 @@
 
 #include "../../inc/minishell.h"
 
-void	init_lexer(t_tree *tree)
+int	ft_perror(char *s)
 {
-	vec_new(&tree->wrap_i, 2, sizeof(char));
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(s, 2);
+	write(2, "\n", 1);
+	return (KO);
 }
 
-int	ft_isquote(int c, t_tree *tree)
+int	error_msg(t_tree *tree, e_error err_msg)
 {
-	char	tmp;
+	if (err_msg != ERR_DEFAULT)
+		tree->error = err_msg;
+	if (tree->error == ERR_OPENQUO)
+		return (ft_perror(MSG_OPENQUO));
+	if (tree->error == ERR_SYX_GRE)
+		return (ft_perror(MSG_SYX_GRE));
+	if (tree->error == ERR_SYX_LES)
+		return (ft_perror(MSG_SYX_LES));
+	if (tree->error == ERR_SYX_PIP)
+		return (ft_perror(MSG_SYX_PIP));
+	if (tree->error == ERR_MALLOCF)
+		return (ft_perror(MSG_MALLOCF));
+	return (KO);
+}
 
-	if ((c != '"' && c != '\'') || !tree)
+void	init_lexer(t_tree *tree)
+{
+	tree->quote = '\0';
+	tree->line.data = NULL;
+}
+
+int	ft_isquote(char *quote, int c)
+{
+	if ((c != '"' && c != '\'') || !quote)
 		return (0);
-	if (tree->wrap_i.len > 0)
-		tmp = *(char *)vec_get(&tree->wrap_i, tree->wrap_i.len - 1);
-	else
-		tmp = '\0';
-	ft_printf("tmp is %c\n", tmp);
-	if (c == '"' || c == '\'')
+	if (c == '"')
 	{
-		if (c == '"')
-		{
-			if (tmp == '"')
-				vec_pop(NULL, &tree->wrap_i);
-			else
-				vec_push(&tree->wrap_i, &c);
-		}
-		if (c == '\'')
-		{
-			if (tmp == '\'')
-				vec_pop(NULL, &tree->wrap_i);
-			else
-				vec_push(&tree->wrap_i, &c);
-		}
-		vec_printf(&tree->wrap_i, 'c');
-		return (1);
+		if (*quote == '\0')
+			*quote = '"';
+		else if (*quote == '"')
+			*quote = '\0';
 	}
+	if (c == '\'')
+	{
+		if (*quote == '\0')
+			*quote = '\'';
+		else if (*quote == '\'')
+			*quote = '\0';
+	}
+	return (1);
+}
+
+// int	char_lexer(int c, t_tree *tree)
+// {
+// 	return (OK);
+// }
+
+int	tokenise_quote(t_tree *tree, char *line, size_t	*start)
+{
+	t_vec	*token;
+	size_t	i;
+
+	i = 0;
+	while (line[i])
+	{
+		if (line[i] == tree->quote)
+			break ;
+		i++;
+	}
+	ft_printf("i is : %u\n", (uint32_t)i);
+	if (i > 0)
+	{
+		ft_print_arena(tree->arena);
+		if (!ft_arena_alloc(tree->arena, (void **)&token, sizeof(t_vec)))
+			return (KO);
+		if (!vec_from(token, line, i, sizeof(char)))
+			return (KO);
+		if (!vec_push(&tree->line, token))
+			return (KO);
+	}
+	*start += i + 1;
+	tree->quote = '\0';
+	return (OK);
+}
+
+int ft_isdblpipe(char *line)
+{
+	size_t	i;
+
+	i = 1;
+	if (line[i] == '|')
+		return (0);
+	while (ft_isspace(line[i]))
+		i++;
+	if (line[i] == '|')
+		return (1);
 	return (0);
+}
+
+int	valid_input(t_tree *tree, char *line)
+{
+	size_t	len;
+	size_t	i;
+	char	quote;
+
+	len = ft_strlen(line);
+	i = 0;
+	quote = '\0';
+	if (ft_strnstr(line, ">>>", len))
+		return (error_msg(tree, ERR_SYX_GRE));
+	if (ft_strnstr(line, "<<<", len))
+		return (error_msg(tree, ERR_SYX_LES));
+	while (i < len)
+	{
+		ft_isquote(&quote, line[i]);
+		if (line[i] == '|')
+			if (ft_isdblpipe(line + i))
+				return (error_msg(tree, ERR_SYX_PIP));
+		i++;
+	}
+	if (quote != '\0')
+		return (error_msg(tree, ERR_OPENQUO));
+	return (OK);
 }
 
 int	lexer(t_tree *tree, char *line)
@@ -56,10 +143,23 @@ int	lexer(t_tree *tree, char *line)
 
 	i = 0;
 	init_lexer(tree);
+	if (!valid_input(tree, line))
+		return (KO);
+	if (!ft_arena_init(&tree->arena, ARENA_BUF))
+		return (error_msg(tree, ERR_MALLOCF));
+	if (!vec_new(&tree->line, 2, sizeof(t_vec *)))
+		return (error_msg(tree, ERR_MALLOCF));
 	while (line[i])
 	{
-		ft_isquote(line[i], tree);
-		i++;
+		if (tree->quote != '\0')
+		{
+			if (!tokenise_quote(tree, line + i, &i))
+				return (error_msg(tree, ERR_MALLOCF));
+		}
+		else if (ft_isquote(&tree->quote, line[i]) && tree->quote == line[i])
+			i++;
+		// else if (!char_lexer(line[i], tree))
+		// 	return (KO);
 	}
 	return (OK);
 }
@@ -70,16 +170,11 @@ int	parser(t_tree *tree)
 	return (OK);
 }
 
-int	error_msg(t_tree tree)
-{
-	(void)tree;
-	return (OK);
-}
-
 int	main(void)
 {
 	static char	*line;
 	t_tree		tree;
+	t_vec		*tmp;
 
 	line = NULL;
 	while (1)
@@ -91,13 +186,18 @@ int	main(void)
 		}
 		line = readline("cmd> ");
 		add_history(line);
-		vec_from(&tree.line, line, ft_strlen(line), sizeof(char));
+		// vec_from(&tree.line, line, ft_strlen(line), sizeof(char));
 		// vec_printf(&tree.line, 's');
 		if (!lexer(&tree, line))
-			return (error_msg(tree));
+			return (EXIT_FAILURE);
 		if (!parser(&tree))
-			return (error_msg(tree));
-		vec_free(&tree.line);
+			return (EXIT_FAILURE);
+		if (tree.line.data)
+		{
+			tmp = *(t_vec **)vec_get(&tree.line, 0);
+			vec_printf(tmp, 'd');
+			vec_free(&tree.line);
+		}
 	}
 	return (EXIT_SUCCESS);
 }

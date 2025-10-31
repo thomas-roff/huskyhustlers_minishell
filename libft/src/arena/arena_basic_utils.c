@@ -34,7 +34,7 @@ int	ft_arena_init(t_arena **arena, size_t capacity)
 	return (1);
 }
 
-int	ft_arena_alloc(t_arena *arena, void *ptr, size_t size)
+int	ft_arena_alloc(t_arena *arena, void **ptr, size_t size)
 {
 	t_arena	*current;
 	t_arena	*next;
@@ -56,7 +56,7 @@ int	ft_arena_alloc(t_arena *arena, void *ptr, size_t size)
 		current->next = next;
 		current = current->next;
 	}
-	ptr = &current->data[current->size];
+	*ptr = (void *)&current->data[current->size];
 	current->size += size;
 	return (1);
 }

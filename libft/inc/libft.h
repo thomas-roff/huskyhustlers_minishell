@@ -193,7 +193,7 @@ int		vec_sort(t_vec *src, int (*f)(void *, void *));
 
 // ARENA FUNCTIONS
 int		ft_arena_init(t_arena **arena, size_t capacity);
-int		ft_arena_alloc(t_arena *arena, void *ptr, size_t size);
+int		ft_arena_alloc(t_arena *arena, void **ptr, size_t size);
 int		ft_arena_reset(t_arena *arena);
 int		ft_arena_free(t_arena **arena);
 int		ft_arena_list_free(t_arena **arena);
