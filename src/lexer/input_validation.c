@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 17:58:39 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/03 19:34:00 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/03 20:42:54 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,6 +188,7 @@ int	main(void)
 	static char	*line;
 	t_tree		tree;
 	t_vec		*tmp;
+	t_cmd		*command;
 
 	line = NULL;
 	while (1)
@@ -211,6 +212,13 @@ int	main(void)
 			vec_printf(tmp, 'd');
 			vec_free(tree.line);
 		}
+		if (command->type == TOK_BUILTIN)
+		{
+			if (command->builtin == ECHO)
+				execute(ECHO, command->args);
+		}
+		if (command->redir != EMPTY)
+			
 	}
 	return (EXIT_SUCCESS);
 }
