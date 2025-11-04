@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 16:05:28 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/03 19:14:45 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/04 19:19:50 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,16 +48,18 @@ static void	vec_printf_array(const t_vec *src, char c)
 	}
 }
 
-void	vec_printf(const t_vec *src, char c)
+void	vec_putvars(const t_vec *src)
 {
-	size_t	i;
-
-	i = 0;
-	if (!src)
-		return ;
 	ft_printf("VECTOR DATA\ncapacity: %u elem_size: %u len: %u\n",
 		(uint32_t)src->capacity, (uint32_t)src->elem_size,
 		(uint32_t)src->len);
+}
+
+void	vec_printf(const t_vec *src, char c)
+{
+	if (!src)
+		return ;
+	vec_putvars(src);
 	if (!src->data)
 		return ;
 	if (c == 'c' || c == 'p' || c == 'd' || c == 'i' || c == 'u' || c == 'x'
