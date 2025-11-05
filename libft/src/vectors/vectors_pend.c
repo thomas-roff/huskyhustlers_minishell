@@ -6,62 +6,91 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 14:10:12 by thblack-          #+#    #+#             */
-/*   Updated: 2025/10/27 14:36:48 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:59:06 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/libft.h"
+#include <stdint.h>
 
 static int	vec_pend(t_vec *dst, t_vec *src)
 {
-	if (!dst || !dst->data || dst->elem_size == 0
-		|| dst->elem_size != src->elem_size
-		|| !src || !src->data || src->len == 0 || src->elem_size == 0)
-		return (-1);
-	if ((dst->len + src->len) * dst->elem_size >= dst->alloc_size)
-	{
-		if (dst->len >= src->len)
-			if (vec_resize(dst, dst->len * dst->elem_size * 4) < 0)
-				return (-1);
-		if (dst->len < src->len)
-			if (vec_resize(dst, src->len * dst->elem_size * 4) < 0)
-				return (-1);
-	}
-	return (1);
+	if (!dst || !src)
+		return (FAIL);
+	if (src->len == 0)
+		return (SUCCESS);
+	if (dst->elem_size == 0 || dst->elem_size != src->elem_size
+		|| !src->data || src->elem_size == 0)
+		return (FAIL);
+	if (!vec_check_and_grow(dst, src->len))
+		return (FAIL);
+	return (SUCCESS);
 }
 
 int	vec_append(t_vec *dst, t_vec *src)
 {
-	if (vec_pend(dst, src) < 0)
-		return (-1);
-	ft_memcpy(dst->data + dst->len * dst->elem_size, src->data, src->len
-		* dst->elem_size);
+	size_t	src_bytes;
+	size_t	dst_bytes;
+
+	if (!dst || !src)
+		return (FAIL);
+	if (!vec_pend(dst, src))
+		return (FAIL);
+	if (!vec_safe_size(src->len, dst->elem_size, &src_bytes))
+		return (FAIL);
+	if (!vec_safe_size(src->len, dst->elem_size, &dst_bytes))
+		return (FAIL);
+	ft_memcpy((uint8_t *)dst->data + dst_bytes,
+		(uint8_t *)src->data, src_bytes);
 	dst->len += src->len;
-	return (1);
+	return (SUCCESS);
 }
 
 int	vec_prepend(t_vec *dst, t_vec *src)
 {
-	if (vec_pend(dst, src) < 0)
-		return (-1);
-	ft_memmove(dst->data + src->len * dst->elem_size, dst->data, dst->len
-		* dst->elem_size);
-	ft_memcpy(dst->data, src->data, src->len * dst->elem_size);
+	size_t	src_bytes;
+	size_t	dst_bytes;
+
+	if (!dst || !src)
+		return (FAIL);
+	if (!vec_pend(dst, src))
+		return (FAIL);
+	if (!vec_safe_size(src->len, dst->elem_size, &src_bytes))
+		return (FAIL);
+	if (!vec_safe_size(dst->len, dst->elem_size, &dst_bytes))
+		return (FAIL);
+	if (dst_bytes > 0)
+		ft_memmove((uint8_t *)dst->data + src_bytes,
+			(uint8_t *)dst->data, dst_bytes);
+	ft_memcpy((uint8_t *)dst->data, (uint8_t *)src->data, src_bytes);
 	dst->len += src->len;
-	return (1);
+	return (SUCCESS);
 }
 
 int	vec_inpend(t_vec *dst, t_vec *src, size_t after)
 {
-	if (after < 0 || after > dst->len)
-		return (-1);
-	if (vec_pend(dst, src) < 0)
-		return (-1);
-	ft_memmove(dst->data + (after + src->len) * dst->elem_size,
-		dst->data + after * dst->elem_size,
-		(dst->len - after) * dst->elem_size);
-	ft_memcpy(dst->data + after * dst->elem_size,
-		src->data, src->len * dst->elem_size);
+	size_t	src_bytes;
+	size_t	dst_bytes;
+	size_t	offset;
+
+	if (!dst || !src)
+		return (FAIL);
+	if (after > dst->len)
+		return (FAIL);
+	if (!vec_pend(dst, src))
+		return (FAIL);
+	if (!vec_safe_size(src->len, dst->elem_size, &src_bytes))
+		return (FAIL);
+	offset = dst->len - after;
+	if (offset > 0)
+	{
+		if (!vec_safe_size(offset, dst->elem_size, &dst_bytes))
+			return (FAIL);
+		ft_memmove((uint8_t *)dst->data + (after + src->len) * dst->elem_size,
+			(uint8_t *)dst->data + after * dst->elem_size, dst_bytes);
+	}
+	ft_memcpy((uint8_t *)dst->data + after * dst->elem_size,
+		(uint8_t *)src->data, src->len * dst->elem_size);
 	dst->len += src->len;
-	return (1);
+	return (SUCCESS);
 }

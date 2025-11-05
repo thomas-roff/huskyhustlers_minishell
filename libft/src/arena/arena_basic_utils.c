@@ -6,33 +6,32 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 13:29:36 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/03 20:17:45 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/03 20:14:38 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/libft.h"
-#include <stdlib.h>
 
 int	ft_arena_init(t_arena **arena, size_t capacity)
 {
 	t_arena	*new;
 
 	if (!arena || capacity == 0 || capacity > (SIZE_MAX / sizeof(uint8_t)))
-		return (-1);
+		return (KO);
 	new = malloc(sizeof(t_arena));
 	if (!new)
-		return (-1);
+		return (KO);
 	new->data = malloc(sizeof(uint8_t) * capacity);
 	if (!new->data)
 	{
 		free(new);
-		return (-1);
+		return (KO);
 	}
 	new->capacity = capacity;
 	new->size = 0;
 	new->next = NULL;
 	*arena = new;
-	return (1);
+	return (OK);
 }
 
 int	ft_arena_alloc(t_arena *arena, void **ptr, size_t size)
@@ -66,9 +65,9 @@ int	ft_arena_alloc(t_arena *arena, void **ptr, size_t size)
 int	ft_arena_reset(t_arena *arena)
 {
 	if (!arena)
-		return (-1);
+		return (KO);
 	arena->size = 0;
-	return (1);
+	return (OK);
 }
 
 int	ft_arena_free(t_arena **arena)
@@ -76,13 +75,13 @@ int	ft_arena_free(t_arena **arena)
 	t_arena	*temp;
 
 	if (!arena || !*arena)
-		return (-1);
+		return (KO);
 	temp = *arena;
 	free(temp->data);
 	temp->data = NULL;
 	free(temp);
 	*arena = NULL;
-	return (1);
+	return (OK);
 }
 
 int	ft_arena_list_free(t_arena **arena)
@@ -91,17 +90,17 @@ int	ft_arena_list_free(t_arena **arena)
 	t_arena	*next;
 
 	if (!arena)
-		return (-1);
+		return (KO);
 	if (!*arena)
-		return (1);
+		return (OK);
 	current = *arena;
 	while (current)
 	{
 		next = current->next;
 		if (ft_arena_free(&current) < 0)
-			return (-1);
+			return (KO);
 		current = next;
 	}
 	*arena = NULL;
-	return (1);
+	return (OK);
 }

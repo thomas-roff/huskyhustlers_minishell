@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 16:05:28 by thblack-          #+#    #+#             */
-/*   Updated: 2025/10/30 17:23:08 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/04 19:19:50 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 static void	vec_printf_s(const t_vec *src)
 {
-	// ft_printf("Data: %s\n", ((char *)src->data));
 	write(1, "Data: ", 6);
 	write(1, (char *)src->data, src->len);
 	write(1, "\n", 1);
@@ -49,16 +48,18 @@ static void	vec_printf_array(const t_vec *src, char c)
 	}
 }
 
+void	vec_putvars(const t_vec *src)
+{
+	ft_printf("VECTOR DATA\ncapacity: %u elem_size: %u len: %u\n",
+		(uint32_t)src->capacity, (uint32_t)src->elem_size,
+		(uint32_t)src->len);
+}
+
 void	vec_printf(const t_vec *src, char c)
 {
-	size_t	i;
-
-	i = 0;
 	if (!src)
 		return ;
-	ft_printf("VECTOR DATA\nalloc_size: %u elem_size: %u len: %u\n",
-		(uint32_t)src->alloc_size, (uint32_t)src->elem_size,
-		(uint32_t)src->len);
+	vec_putvars(src);
 	if (!src->data)
 		return ;
 	if (c == 'c' || c == 'p' || c == 'd' || c == 'i' || c == 'u' || c == 'x'
