@@ -26,6 +26,7 @@ typedef struct s_vec	t_vec;
 # define MSG_SYX_PIP "syntax error near unexpected token '|'"
 # define MSG_MALLOCF "malloc fail"
 # define MSG_UNITIAL "unitialised values"
+# define MSG_OVERFLO "size_t overflow"
 
 typedef enum {
 	ERR_NOERROR, // No error
@@ -132,6 +133,7 @@ typedef struct s_token {
 	e_tok_type	type;
 	e_redirect	redirect;
 	char		quote;
+	bool		expand;
 	size_t		read_size;
 	// e_control	ctrl;
 	// e_redirect	redir;

@@ -12,6 +12,7 @@
 
 #include "../../inc/minishell.h"
 #include "../../inc/parsing.h"
+#include <stdint.h>
 
 int	ft_perror(char *s)
 {
@@ -80,7 +81,9 @@ void	init_lexer(t_token **token, t_tree *tree)
 	if (!vec_alloc(&new->tok_chars, tree->arena))
 		clean_exit(tree, "malloc fail 4");
 	new->type = TOK_DEFAULT;
+	new->redirect = RDR_DEFAULT;
 	new->quote = '\0';
+	new->expand = false;
 	new->read_size = 1;
 }
 
@@ -117,7 +120,11 @@ void	tokenise_quote(t_token *token, char *line, t_tree *tree)
 	token->quote = *line;
 	i = 0;
 	while (line[i + 1] != token->quote)
+	{
+		if (line[i] == '$' && token->quote == '"' && token->expand == false)
+			token->expand = true;
 		i++;
+	}
 	if (i > 0)
 		if (!vec_from(token->tok_chars, line + 1, i, sizeof(char)))
 			clean_exit(tree, "malloc fail 2");
@@ -160,7 +167,11 @@ void	tokenise_word(t_token *token, char *line, t_tree *tree)
 
 	i = 0;
 	while (line[i] && !ft_isspace(line[i]) && !ft_ismetachar(*line))
+	{
+		if (line[i] == '$' && token->expand == false)
+			token->expand = true;
 		i++;
+	}
 	if (i > 0)
 		if (!vec_from(token->tok_chars, line, i, sizeof(char)))
 			clean_exit(tree, "malloc fail 2");
@@ -178,6 +189,111 @@ void	tokenise(t_token *token, char *line, t_tree *tree)
 		tokenise_redirect(token, line);
 	else
 		tokenise_word(token, line, tree);
+}
+
+size_t	exp_len(size_t *start, bool *braces, t_token *token, size_t i)
+{
+	size_t	len;
+
+	len = 0;
+	if (((char *)token->tok_chars->data)[i + 1] == '{')
+	{
+		i += 2;
+		*braces = true;
+	}
+	else
+		i += 1;
+	while (i + len < token->tok_chars->len &&
+		((char *)token->tok_chars->data)[i + len] != '}'
+		&& ((char *)token->tok_chars->data)[i + len] != ' ')
+		len++;
+	*start = i;
+	return (len);
+}
+
+// void	fetch_exp_chars(t_vec *tmp, t_token *token, size_t start, size_t len)
+// {
+// 	size_t	alloc_bytes;
+//
+// 	if (!vec_safe_size(len + 1, token->tok_chars->elem_size, &alloc_bytes))
+// 		clean_exit(tree, MSG_OVERFLO);
+// 	if (!ft_arena_alloc(tree->arena, (void **)tmp, alloc_bytes))
+// 		clean_exit(tree, MSG_MALLOCF);
+// 	ft_memcpy(tmp, token->tok_chars->data + start,
+// 		len * token->tok_chars->elem_size);
+// 	tmp[len + 1] = '\0';
+// }
+
+void	expand_env_var(t_vec *tmp, t_tree *tree)
+{
+	char	*env_var;
+
+	env_var = getenv((char *)tmp->data);
+	vec_reset(tmp);
+	if (!vec_from(tmp, env_var, ft_strlen(env_var), sizeof(char)))
+		clean_exit(tree, MSG_MALLOCF);
+	vec_pop(NULL, tmp);
+}
+
+void	remove_exp(t_token *token, size_t *start, size_t len, bool braces)
+{
+	size_t	i;
+
+	if (braces == true)
+	{
+		*start -= 2;
+		len += 2;
+	}
+	else
+		*start -= 1;
+	i = *start;
+	while (i <= len)
+	{
+		vec_remove(token->tok_chars, *start);
+		i++;
+	}
+}
+
+size_t	parse_expansion(t_token *token, size_t i, t_tree *tree)
+{
+	t_vec	*tmp;
+	size_t	start;
+	size_t	len;
+	bool	braces;
+
+	tmp = NULL;
+	start = 0;
+	braces = false;
+	len = exp_len(&start, &braces, token, i);
+	if (len > 0)
+	{
+		if (!vec_alloc(&tmp, tree->arena))
+			clean_exit(tree, MSG_MALLOCF);
+		if (!vec_from(tmp, vec_get(token->tok_chars, start),
+			len + 1, sizeof(char)))
+			clean_exit(tree, MSG_MALLOCF);
+		tmp->data[len] = '\0';
+		expand_env_var(tmp, tree);
+		remove_exp(token, &start, len, braces);
+		if (!vec_inpend(token->tok_chars, tmp, start))
+			clean_exit(tree, MSG_MALLOCF);
+	}
+	i += start + len;
+	return (i);
+}
+
+void	expandise(t_token *token, t_tree *tree)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < token->tok_chars->len)
+	{
+		if (((char *)token->tok_chars->data)[i] == '$')
+			i = parse_expansion(token, i, tree);
+		else
+			i++;
+	}
 }
 
 // TODO: WRITE yacc implementation tokens to commands
@@ -207,6 +323,11 @@ int	parser(t_tree *tree, char *line)
 		if (token->tok_chars)
 			vec_printf_s(token->tok_chars);
 		// ft_printf("Read size: %u\n", (uint32_t)token->read_size);
+		if (token->expand == true)
+		{
+			expandise(token, tree);
+			vec_printf_s(token->tok_chars);
+		}
 		commandise(tree, token);
 		line += token->read_size;
 		vec_reset(token->tok_chars);
