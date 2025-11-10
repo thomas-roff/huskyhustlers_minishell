@@ -16,7 +16,7 @@
 void	tokenise(t_token *token, char *line, t_tree *tree)
 {
 	if (!token || !line || !tree)
-		clean_exit(tree, MSG_UNITIAL);
+		clean_exit(tree, MSG_UNINTAL);
 	if (*line == '"' || *line == '\'')
 		tokenise_quote(token, line, tree);
 	else if (ft_ismetachar(*line))
@@ -70,15 +70,17 @@ void	tokenise_word(t_token *token, char *line, t_tree *tree)
 	size_t	i;
 
 	i = 0;
-	while (line[i] && !ft_isspace(line[i]) && !ft_ismetachar(*line))
+	while (line[i] && !ft_isspace(line[i]) && !ft_ismetachar(line[i]))
 	{
 		if (line[i] == '$' && token->expand == false)
 			token->expand = true;
 		i++;
 	}
 	if (i > 0)
+	{
 		if (!vec_from(token->tok_chars, line, i, sizeof(char)))
 			clean_exit(tree, "malloc fail 2");
+	}
 	token->type = TOK_WORD;
 	token->read_size = i;
 }

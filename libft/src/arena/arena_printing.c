@@ -19,9 +19,9 @@ void	ft_print_arena(const t_arena *arena)
 		ft_putendl_fd("arena: (null)", 2);
 		return ;
 	}
-	ft_printf("capacity: %u, size: %u, data ptr: %p\n",
+	ft_printf("capacity: %u, size: %u, data ptr: %p, next ptr: %p\n",
 		(u_int32_t)arena->capacity, (u_int32_t)arena->size,
-		(const void *)arena->data);
+		(const void *)arena->data, (const void *)arena->data);
 }
 
 void	ft_print_arena_list(const t_arena *arena)
@@ -36,7 +36,7 @@ void	ft_print_arena_list(const t_arena *arena)
 	}
 	current = arena;
 	i = 1;
-	while (current->next)
+	while (current)
 	{
 		ft_printf("ARENA %d ", i);
 		ft_print_arena(current);

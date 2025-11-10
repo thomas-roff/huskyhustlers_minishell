@@ -12,6 +12,8 @@
 
 #include "../../inc/parsing.h"
 
+void	token_reset(t_token *token);
+
 int	parser(t_tree *tree, char *line)
 {
 	t_token	*token;
@@ -22,7 +24,7 @@ int	parser(t_tree *tree, char *line)
 	if (!valid_input(line))
 		return (FAIL);
 	init_lexer(&token, tree);
-	while (line && *line && *line != '\0')
+	while (*line)
 	{
 		while (ft_isspace(*line))
 			line++;
@@ -39,22 +41,35 @@ int	parser(t_tree *tree, char *line)
 		}
 		commandise(tree, token);
 		line += token->read_size;
-		vec_reset(token->tok_chars);
+		// token_reset(token);
 	}
 	return (SUCCESS);
 }
+
+// void	token_reset(t_token *token)
+// {
+// 	vec_reset(token->tok_chars);
+// 	token->type = TOK_DEFAULT;
+// 	token->redirect = RDR_DEFAULT;
+// 	token->quote = '\0';
+// 	token->expand = false;
+// 	token->read_size = 1;
+// }
 
 void	init_lexer(t_token **token, t_tree *tree)
 {
 	t_token	*new;
 
 	if (!token || !tree)
-		clean_exit(tree, MSG_UNITIAL);
+		clean_exit(tree, MSG_UNINTAL);
+	if (*token)
+		return ;
 	if (!ft_arena_init(&tree->arena, ARENA_BUF))
 		clean_exit(tree, "malloc fail 2");
 	if (!ft_arena_alloc(tree->arena, (void **)token, sizeof(t_token)))
 		clean_exit(tree, "malloc fail 3");
 	new = *token;
+	new->tok_chars = NULL;
 	if (!vec_alloc(&new->tok_chars, tree->arena))
 		clean_exit(tree, "malloc fail 4");
 	new->type = TOK_DEFAULT;

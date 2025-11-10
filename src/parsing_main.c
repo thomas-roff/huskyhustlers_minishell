@@ -12,9 +12,11 @@
 
 #include "../inc/minishell.h"
 #include "../inc/parsing.h"
+#include <stdlib.h>
 
 int	main(void)
 {
+	// sig_init();
 	if (!minishell())
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
@@ -36,6 +38,11 @@ int	minishell(void)
 		}
 		line = readline("cmd> ");
 		add_history(line);
+		if (ft_strncmp(line, "exit", ft_strlen(line)) == 0)
+		{
+			ft_arena_list_free(&tree.arena);
+			return (SUCCESS);
+		}
 		parser(&tree, line);
 		// executor(&tree);
 	}
@@ -47,16 +54,24 @@ void	init_minishell(t_tree *tree)
 	tree->arena = NULL;
 }
 
-void	signal_handler(int sig)
-{
-	(void)sig;
-	ft_printf("Signal received\n");
-}
-
-// int	main(int argc, char **argv)
+// void	handle_sigint(int sig)
+// {
+// 	(void)sig;
+// 	ft_printf("Signal received\n");
+// }
+//
+// void	handle_sigquit(int sig)
+// {
+// 	(void)sig;
+// 	ft_printf("Signal received\n");
+// }
+//
+// void	sig_init()
 // {
 // 	struct sigaction	sa;
 //
-// 	sa.sa_handler = &signal_handler;
-// 	return (EXIT_SUCCESS);
+// 	sa.sa_handler = &handle_sigint;
+// 	sa.sa_flags = SA_RESTART;
+// 	sigaction(SIGINT, &sa, NULL);
+// 	sigaction(SIGQUIT, &sa, NULL);
 // }

@@ -16,44 +16,49 @@
 
 void	expandise(t_token *token, t_tree *tree)
 {
+	t_vec	*tmp;
 	size_t	i;
 
+	tmp = NULL;
 	i = 0;
+	if (!vec_alloc(&tmp, tree->arena))
+		clean_exit(tree, MSG_MALLOCF);
 	while (i < token->tok_chars->len)
 	{
 		if (((char *)token->tok_chars->data)[i] == '$')
-			i = parse_expansion(token, i, tree);
-		else
-			i++;
+		{
+			i += parse_expansion(token, tmp, i, tree);
+			if (tmp->len > 0)
+				vec_reset(tmp);
+		}
+		i++;
 	}
 }
 
-size_t	parse_expansion(t_token *token, size_t i, t_tree *tree)
+size_t	parse_expansion(t_token *token, t_vec *tmp, size_t i, t_tree *tree)
 {
-	t_vec	*tmp;
 	size_t	start;
 	size_t	len;
 	bool	braces;
 
-	tmp = NULL;
 	start = 0;
 	braces = false;
 	len = exp_len(&start, &braces, token, i);
-	if (len > 0)
+	if (len == 0)
 	{
-		if (!vec_alloc(&tmp, tree->arena))
-			clean_exit(tree, MSG_MALLOCF);
-		if (!vec_from(tmp, vec_get(token->tok_chars, start),
-				len + 1, sizeof(char)))
-			clean_exit(tree, MSG_MALLOCF);
-		tmp->data[len] = '\0';
-		expand_env_var(tmp, tree);
 		remove_exp(token, &start, len, braces);
-		if (!vec_inpend(token->tok_chars, tmp, start))
-			clean_exit(tree, MSG_MALLOCF);
+		return (0);
 	}
-	i += tmp->len;
-	return (i);
+	if (!vec_from(tmp, vec_get(token->tok_chars, start),
+			len + 1, sizeof(char)))
+		clean_exit(tree, MSG_MALLOCF);
+	tmp->data[len] = '\0';
+	remove_exp(token, &start, len, braces);
+	if (!expand_env_var(tmp, tree))
+		return (0);
+	if (!vec_inpend(token->tok_chars, tmp, start))
+		clean_exit(tree, MSG_MALLOCF);
+	return (tmp->len);
 }
 
 size_t	exp_len(size_t *start, bool *braces, t_token *token, size_t i)
@@ -76,15 +81,18 @@ size_t	exp_len(size_t *start, bool *braces, t_token *token, size_t i)
 	return (len);
 }
 
-void	expand_env_var(t_vec *tmp, t_tree *tree)
+int	expand_env_var(t_vec *tmp, t_tree *tree)
 {
 	char	*env_var;
 
 	env_var = getenv((char *)tmp->data);
+	if (!env_var)
+		return (FAIL);
 	vec_reset(tmp);
 	if (!vec_from(tmp, env_var, ft_strlen(env_var), sizeof(char)))
 		clean_exit(tree, MSG_MALLOCF);
 	vec_pop(NULL, tmp);
+	return (SUCCESS);
 }
 
 void	remove_exp(t_token *token, size_t *start, size_t len, bool braces)

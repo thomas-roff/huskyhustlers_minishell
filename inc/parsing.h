@@ -25,8 +25,9 @@ typedef struct s_vec	t_vec;
 # define MSG_SYX_LES "syntax error near unexpected token '<'"
 # define MSG_SYX_PIP "syntax error near unexpected token '|'"
 # define MSG_MALLOCF "malloc fail"
-# define MSG_UNITIAL "unitialised values"
+# define MSG_UNINTAL "unitialised values"
 # define MSG_OVERFLO "size_t overflow"
+# define MSG_BAD_SUB "bad substitution"
 
 typedef enum {
 	ERR_NOERROR, // No error
@@ -180,8 +181,9 @@ void	clean_exit(t_tree *tree, char *error);
 
 // INPUT VALIDATION
 int		valid_input(char *line);
-int		ft_isdblpipe(char *line);
-int		ft_isquote(char *quote, int c);
+bool	ft_isdblpipe(char *line);
+bool	ft_isquote(char *quote, int c);
+bool	ft_isbadsubstitute(char *line);
 
 // TOKENISER
 void	tokenise(t_token *token, char *line, t_tree *tree);
@@ -192,9 +194,9 @@ void	tokenise_word(t_token *token, char *line, t_tree *tree);
 
 // EXPANDER
 void	expandise(t_token *token, t_tree *tree);
-size_t	parse_expansion(t_token *token, size_t i, t_tree *tree);
+size_t	parse_expansion(t_token *token, t_vec *tmp, size_t i, t_tree *tree);
 size_t	exp_len(size_t *start, bool *braces, t_token *token, size_t i);
-void	expand_env_var(t_vec *tmp, t_tree *tree);
+int		expand_env_var(t_vec *tmp, t_tree *tree);
 void	remove_exp(t_token *token, size_t *start, size_t len, bool braces);
 
 // COMMANDISER

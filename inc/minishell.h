@@ -20,14 +20,8 @@
 # include <signal.h>
 # include <stdio.h>
 
-// CODES FOR ERROR TRACKING
-// SUCCESSFUL EXECUTION
-# define OK 1
-// UNSUCCEFUL EXECUTION
-# define KO 0
-
 // MAIN
-int		minishell(void);
+int	minishell(void);
 void	init_minishell(t_tree *tree);
 void	signal_handler(int sig);
 

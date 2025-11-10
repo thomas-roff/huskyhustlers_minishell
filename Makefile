@@ -6,7 +6,7 @@
 #    By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/24 14:57:58 by thblack-          #+#    #+#              #
-#    Updated: 2025/11/10 12:31:14 by thblack-         ###   ########.fr        #
+#    Updated: 2025/11/10 12:55:16 by thblack-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -122,4 +122,4 @@ run: $(NAME)
 
 retry: clean all run
 
-.PHONY: all clean fclean re debug
+.PHONY: all clean fclean re run retry

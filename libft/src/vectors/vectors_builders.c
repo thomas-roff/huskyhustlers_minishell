@@ -29,7 +29,6 @@ int	vec_alloc(t_vec **dst, t_arena *arena)
 		new = malloc(sizeof(t_vec));
 		if (!new)
 			return (vec_exit(*dst));
-		// ft_memset(new, 0, sizeof(t_vec));
 	}
 	vec_init(new, 0, 0, arena);
 	*dst = new;
@@ -67,7 +66,7 @@ int	vec_from(t_vec *dst, void *src, size_t len, size_t elem_size)
 		return (FAIL);
 	if (len == 0)
 		return (vec_new(dst, 0, elem_size));
-	if (!vec_safe_size(len * 2, elem_size, &bytes))
+	if (!vec_safe_size(len, elem_size, &bytes))
 		return (FAIL);
 	if (!vec_new(dst, len * 2, elem_size))
 		return (FAIL);
