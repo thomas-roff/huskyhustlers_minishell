@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 11:41:21 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/10 12:23:04 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/11 16:38:58 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@ int	parser(t_tree *tree, char *line)
 {
 	t_vec	*tokens;
 	t_token	*tok;
-	size_t	i;
-	// t_token	*token;
 
 	if (!tree || !line)
 		return (FAIL);
@@ -32,22 +30,20 @@ int	parser(t_tree *tree, char *line)
 	if (ft_nothingtodo(&line))
 		return (SUCCESS);
 	tokens = NULL;
-	i = 0;
+	tok = NULL;
 	init_lexer(&tokens, tree);
 	while (*line)
 	{
-		tok = NULL;
 		init_tok(&tok, tokens, tree);
 		while (ft_isspace(*line))
 			line++;
 		tokenise(tok, line, tree);
 		if (tok->expand == true)
 			expandise(tok, tree);
-		ft_printf("Read size: %u\n", (uint32_t)tok->read_size);
 		line += tok->read_size;
-		i++;
 	}
-	// commandise(tree, token);
+	print_tokens(tokens);
+	commandise(tree, tokens);
 	return (SUCCESS);
 }
 
@@ -56,7 +52,7 @@ static void	init_tok(t_token **tok, t_vec *tokens, t_tree *tree)
 	t_token	*new;
 
 	new = NULL;
-	if (!ft_arena_alloc(tree->arena, (void **)&new, sizeof(&new)))
+	if (!ft_arena_alloc(tree->arena, (void **)&new, sizeof(t_token)))
 		clean_exit(tree, MSG_MALLOCF);
 	new->tok_chars = NULL;
 	if (!vec_alloc(&new->tok_chars, tree->arena))

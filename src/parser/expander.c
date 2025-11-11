@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 11:59:02 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/10 12:52:52 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/11 16:37:11 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,6 @@ static int	expand_env_var(t_vec *tmp, t_tree *tree)
 
 static void	rm_exp(t_token *tok, size_t *start, size_t len, bool braces)
 {
-	size_t	i;
-
-	i = 0;
 	if (braces == true)
 	{
 		*start -= 2;
@@ -115,9 +112,5 @@ static void	rm_exp(t_token *tok, size_t *start, size_t len, bool braces)
 		*start -= 1;
 		len += 1;
 	}
-	while (i < len)
-	{
-		vec_remove(tok->tok_chars, *start);
-		i++;
-	}
+	vec_trim(tok->tok_chars, *start, len);
 }

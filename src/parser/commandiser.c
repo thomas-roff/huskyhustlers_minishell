@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 12:03:45 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/10 12:22:48 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/11 16:39:40 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@
 static void	init_cmd_table(t_tree *tree);
 // static void	parse_word(t_tree *tree, t_token *token);
 
-void	commandise(t_tree *tree, t_token *tok)
+void	commandise(t_tree *tree, t_vec *tokens)
 {
-	if (!tree || !tok)
+	if (!tree || !tokens)
 		return ;
 	if (!tree->cmd_tab)
 		init_cmd_table(tree);

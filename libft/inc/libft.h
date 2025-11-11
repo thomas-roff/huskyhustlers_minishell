@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:32:41 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/04 19:20:12 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/11 16:35:08 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,6 +193,7 @@ void	*vec_get(t_vec *src, size_t index);
 int		vec_check_and_grow(t_vec *dst, size_t extra);
 int		vec_insert(t_vec *dst, void *src, size_t index);
 int		vec_remove(t_vec *src, size_t index);
+int		vec_trim(t_vec *src, size_t index, size_t len);
 int		vec_append(t_vec *dst, t_vec *src);
 int		vec_prepend(t_vec *dst, t_vec *src);
 int		vec_inpend(t_vec *dst, t_vec *src, size_t after);

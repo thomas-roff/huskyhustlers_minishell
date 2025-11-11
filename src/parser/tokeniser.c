@@ -80,15 +80,11 @@ static void	tokenise_word(t_token *tok, char *line, t_tree *tree)
 			tok->expand = true;
 		i++;
 	}
-	if (!tok->tok_chars)
-		ft_printf("I got here\n");
 	if (i > 0)
 	{
-		ft_printf("%s\n", line);
 		if (!vec_from(tok->tok_chars, line, i, sizeof(char)))
 			clean_exit(tree, MSG_MALLOCF);
 	}
 	tok->type = TOK_WORD;
 	tok->read_size = i;
-	vec_printf(tok->tok_chars, 's');
 }

@@ -1,31 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exit.c                                             :+:      :+:    :+:   */
+/*   printing.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/10 11:45:20 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/11 16:18:12 by thblack-         ###   ########.fr       */
+/*   Created: 2025/11/11 16:17:20 by thblack-          #+#    #+#             */
+/*   Updated: 2025/11/11 16:19:11 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/parsing.h"
 
-void	clean_exit(t_tree *tree, char *error)
+void	print_tokens(t_vec *tokens)
 {
-	if (tree)
-		if (tree->arena)
-			ft_arena_list_free(&tree->arena);
-	if (error)
-		ft_perror(error);
-	exit(EXIT_FAILURE);
-}
+	t_token	*tok;
+	size_t	i;
 
-int	ft_perror(char *s)
-{
-	ft_putstr_fd("minishell: ", 2);
-	ft_putstr_fd(s, 2);
-	write(2, "\n", 1);
-	return (FAIL);
+	i = 0;
+	while (i < tokens->len)
+	{
+		tok = *(t_token **)vec_get(tokens, i);
+		vec_printf_s(tok->tok_chars);
+		i++;
+	}
 }

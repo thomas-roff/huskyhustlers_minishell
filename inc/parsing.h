@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 10:14:19 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/10 12:04:48 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/11 16:39:32 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,10 +107,11 @@ void	tokenise(t_token *token, char *line, t_tree *tree);
 void	expandise(t_token *token, t_tree *tree);
 
 // COMMANDISER
-void	commandise(t_tree *tree, t_token *token);
+void	commandise(t_tree *tree, t_vec *tokens);
 
 // UTILS
 bool	ft_ismetachar(char c);
+void	print_tokens(t_vec *tokens);
 
 #endif
 
