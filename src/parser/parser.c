@@ -14,13 +14,14 @@
 
 void	token_reset(t_token *token);
 
-static void	init_lexer(t_token **token, t_tree *tree);
+static void	init_lexer(t_vec **tokens, t_tree *tree);
 static bool	ft_nothingtodo(char **line);
 
 int	parser(t_tree *tree, char *line)
 {
-	t_token	*token;
-	// e_syntax	syntax;
+	t_vec	*tokens;
+	size_t	i;
+	// t_token	*token;
 
 	if (!tree || !line)
 		return (FAIL);
@@ -28,17 +29,17 @@ int	parser(t_tree *tree, char *line)
 		return (FAIL);
 	if (ft_nothingtodo(&line))
 		return (SUCCESS);
-	token = NULL;
-	// syntax = SYN_DEFAULT;
-	init_lexer(&token, tree);
-	while (*line)
-	{
-		tokenise(token, line, tree);
-		if (token->expand == true)
-			expandise(token, tree);
-		vec_printf_s(token->tok_chars);
-		line += token->read_size;
-	}
+	init_lexer(&tokens, tree);
+	i = 0;
+	// while (*line)
+	// {
+	// 	tokenise(vec_get(&tokens, i), line, tree);
+	// 	if (token->expand == true)
+	// 		expandise(token, tree);
+	// 	vec_printf_s(token->tok_chars);
+	// 	line += token->read_size;
+	// 	i++;
+	// }
 	// commandise(tree, token);
 	return (SUCCESS);
 }
@@ -52,16 +53,19 @@ static bool	ft_nothingtodo(char **line)
 	return (false);
 }
 
-static void	init_lexer(t_token **token, t_tree *tree)
+static void	init_lexer(t_vec **tokens, t_tree *tree)
 {
-	t_token	*new;
+	t_vec	*new;
 
-	if (!token || !tree)
+	if (!tokens || !tree)
 		clean_exit(tree, MSG_UNINTAL);
-	if (*token)
-		return ;
 	if (!ft_arena_init(&tree->arena, ARENA_BUF))
-		clean_exit(tree, "malloc fail 2");
+		clean_exit(tree, MSG_MALLOCF);
+	// ft_printf("I got here\n");
+	// vec_init(tokens, 1, sizeof(t_token), tree->arena);
+	// vec_putvars(tokens);
+	if (!vec_new(tokens, 1, sizeof(t_token)))
+		clean_exit(tree, MSG_MALLOCF);
 	if (!ft_arena_alloc(tree->arena, (void **)token, sizeof(t_token)))
 		clean_exit(tree, "malloc fail 3");
 	new = *token;
