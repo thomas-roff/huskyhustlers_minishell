@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 11:41:21 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/11 16:38:58 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/11 17:41:33 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,7 @@ int	parser(t_tree *tree, char *line)
 	t_vec	*tokens;
 	t_token	*tok;
 
-	if (!tree || !line)
-		return (FAIL);
-	if (!valid_input(line))
+	if (!tree || !line || !valid_input(line))
 		return (FAIL);
 	if (ft_nothingtodo(&line))
 		return (SUCCESS);
