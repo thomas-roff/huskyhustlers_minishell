@@ -6,7 +6,7 @@
 #    By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/24 14:57:58 by thblack-          #+#    #+#              #
-#    Updated: 2025/11/10 12:55:16 by thblack-         ###   ########.fr        #
+#    Updated: 2025/11/13 15:10:45 by thblack-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -120,6 +120,12 @@ run: $(NAME)
 	@echo "Running $(NAME)..."
 	@./$(NAME)
 
+debug: $(NAME)
+	@echo "Running $(NAME) -debug..."
+	@./$(NAME) -debug
+
 retry: clean all run
 
-.PHONY: all clean fclean re run retry
+redebug: clean all debug
+
+.PHONY: all clean fclean re run retry debug redebug
