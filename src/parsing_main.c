@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 17:58:39 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/13 17:14:24 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/13 17:17:03 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ static int	minishell(t_flag mode_flag)
 			return (SUCCESS);
 		}
 		parser(&tree, line, mode_flag);
+		// TODO: Build execution that takes t_tree struct
+		// executor(&tree);
 	}
 }
 
