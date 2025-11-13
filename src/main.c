@@ -1,17 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing_main.c                                     :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 17:58:39 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/13 17:21:54 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/13 17:52:28 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
+#include "../inc/signals.h"
 #include "../inc/parsing.h"
+#include "../inc/execution.h"
 
 extern volatile sig_atomic_t	g_receipt;
 
@@ -51,6 +53,8 @@ static int	minishell(t_flag mode_flag)
 	t_tree	tree;
 
 	line = NULL;
+	// TODO: Build ctrl-C, D and \ handling
+	// init_signals();
 	init_minishell(&tree);
 	while (1)
 	{
@@ -66,8 +70,8 @@ static int	minishell(t_flag mode_flag)
 			return (SUCCESS);
 		}
 		parser(&tree, line, mode_flag);
-		// TODO: Build execution that takes t_tree struct
-		// executor(&tree);
+		// TODO: space for executor to run in minishell loop
+		// executor(&tree, mode_flag);
 	}
 }
 

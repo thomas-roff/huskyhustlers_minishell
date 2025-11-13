@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 18:07:57 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/13 16:52:23 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/13 17:28:32 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,5 +28,21 @@ typedef enum e_flag
 	FLAG_DEFAULT,
 	FLAG_DEBUG,
 }	t_flag;
+
+typedef struct s_cmd
+{
+	size_t	argc;
+	char	**argv;
+	char	*input;
+	char	*output;
+	char	*heredoc;
+}	t_cmd;
+
+typedef struct s_tree
+{
+	t_vec	*cmd_tab;
+	t_vec	*envp;
+	t_arena	*arena;
+}	t_tree;
 
 #endif

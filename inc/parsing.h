@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 10:14:19 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/13 16:56:17 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/13 17:29:01 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,41 +67,6 @@ typedef struct s_token
 	bool		expand;
 	size_t		read_size;
 }	t_token;
-
-// typedef enum {
-// 	CMD_BIN,
-// 	CMD_BUILTIN,
-// } e_cmd_type;
-//
-// typedef enum {
-// 	BUI_NONE,
-// 	BUI_ECHO,
-// 	BUI_CD,
-// 	BUI_PWD,
-// 	BUI_EXPORT,
-// 	BUI_UNSET,
-// 	BUI_ENV,
-// 	BUI_EXIT
-// } e_builtin;
-
-	// e_cmd_type	cmd_type;
-	// e_builtin	builtin;
-
-typedef struct s_cmd
-{
-	size_t	argc;
-	char	**argv;
-	char	*input;
-	char	*output;
-	char	*heredoc;
-}	t_cmd;
-
-typedef struct s_tree
-{
-	t_vec	*cmd_tab;
-	t_vec	*envp;
-	t_arena	*arena;
-}	t_tree;
 
 // PARSING
 int		parser(t_tree *tree, char *line, t_flag flag);
