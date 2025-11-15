@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 13:19:27 by thblack-          #+#    #+#             */
-/*   Updated: 2025/10/06 13:32:53 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/04 18:36:27 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ long long	ft_super_atoi(const char *nptr)
 			return (res);
 		nptr++;
 	}
-	return (res);
+	return (res * sign);
 }
 
 bool	ft_atoi(const char *nptr, int *nbr)

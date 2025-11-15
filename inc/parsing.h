@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 10:14:19 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/03 21:51:24 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/13 17:29:01 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,50 +14,88 @@
 # define PARSING_H
 
 # include "minishell.h"
+# include "../libft/inc/libft.h"
 
 // FORWARD DECLARATIONS (Actual definitions in libft.h)
 typedef struct s_arena	t_arena;
 typedef struct s_vec	t_vec;
 
-typedef enum {
-	CMD_BIN,
-	CMD_BUILTIN,
-	CMD_EXIT_STATUS
-} e_cmd_type;
+// ERROR MESSAGES
+# define MSG_OPENQUO "syntax error unmatched quotes"
+# define MSG_SYX_GRE "syntax error near unexpected token '>'"
+# define MSG_SYX_LES "syntax error near unexpected token '<'"
+# define MSG_SYX_PIP "syntax error near unexpected token '|'"
+# define MSG_MALLOCF "malloc fail"
+# define MSG_UNINTAL "unitialised values"
+# define MSG_OVERFLO "size_t overflow"
+# define MSG_BAD_SUB "bad substitution"
 
-typedef enum {
+typedef enum e_quote
+{
+	QUO_DEFAULT,
+	QUO_SINGLE,
+	QUO_DOUBLE,
+}	t_quote;
+
+typedef enum e_tok_type
+{
+	TOK_DEFAULT,
+	TOK_COMMAND,
+	TOK_WORD,
+	TOK_QUOTATION, // Quote or escape character
+	TOK_REDIRECT, // Redirect operato
+	TOK_IO,
+	TOK_PIPE,
+}	t_tok_type;
+
+typedef enum e_redirect
+{
 	RDR_DEFAULT,
 	RDR_WRITE,
 	RDR_APPEND,
-	RDR_FILE,
-	RDR_FILE_DELIM,
-	RDR_PIPE
-} e_redirect;
+	RDR_READ,
+	RDR_HEREDOC,
+}	t_redirect;
 
-typedef enum {
-	BUI_NONE,
-	BUI_ECHO,
-	BUI_CD,
-	BUI_PWD,
-	BUI_EXPORT,
-	BUI_UNSET,
-	BUI_ENV,
-	BUI_EXIT
-} e_builtin;
+typedef struct s_token
+{
+	t_vec		*tok_chars;
+	t_tok_type	type;
+	t_redirect	redirect;
+	t_quote		quote_type;
+	char		quote_char;
+	bool		expand;
+	size_t		read_size;
+}	t_token;
 
-typedef struct s_cmd {
-	t_vec		*cmd;
-	t_vec		*args;
-	e_cmd_type	cmd_type;
-	e_builtin	builtin;
-	e_redirect	input;
-	e_redirect	ouput;
-} t_cmd;
+// PARSING
+int		parser(t_tree *tree, char *line, t_flag flag);
 
-typedef struct s_tree {
-	t_vec	*cmd_tab;
-	t_arena	*arena;
-} t_tree;
+// EXIT
+int		ft_perror(char *s);
+void	clean_exit(t_tree *tree, char *error);
+
+// INPUT VALIDATION
+int		valid_input(char *line);
+
+// TOKENISER
+void	tokenise(t_token *tok, t_redirect *rdr_flag, char *line, t_tree *tree);
+void	handle_redirect(t_token *tok, char *line);
+
+// EXPANDER
+void	expandise(t_token *token, t_tree *tree);
+
+// COMMANDISER
+void	commandise(t_tree *tree, t_vec *tokens);
+void	init_cmd_table(t_tree *tree);
+void	init_cmd(t_cmd **cmd, size_t argc, t_tree *tree);
+
+// UTILS
+bool	ft_ismetachar(char c);
+void	print_tokens(t_vec *tokens);
+void	print_tokens_vars(t_vec *tokens);
+void	print_tok_vars(t_token *tok);
+void	print_cmd_tab(t_vec *cmd_tab);
+void	print_debugging(t_vec *tokens, t_tree *tree);
 
 #endif
-
