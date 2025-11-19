@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:32:41 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/11 16:35:08 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/19 22:44:22 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,8 @@ int		ft_isarr(char **arr, int (f)(int));
 // GNL
 // Reads a file pointed to by int 'fd' and returns the first line or EOF as a
 // string
-char	*get_next_line(int fd);
+char	*gnl(int fd);
+char	*supergnl(int fd);
 
 // LISTS
 t_list	*ft_lstnew(void *content);
