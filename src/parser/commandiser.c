@@ -103,18 +103,23 @@ static void	parse_argv(t_cmd *cmd, t_token *tok, size_t argi, t_tree *tree)
 	cmd->argv[argi] = arg;
 }
 
-static void	copy_redirect(char **array, void *ptr, size_t len, t_tree *tree)
+static void	copy_str(char **str, void *ptr, size_t len, t_tree *tree)
 {
 	char	*new;
 
 	new = NULL;
-	while (*array)
-		array++;
-	if (!ft_arena_alloc(tree->arena, (void **)&new,
-			(len + 1) * sizeof(char)))
+	if (!ft_arena_alloc(tree->arena, (void **)&new, (len + 1) * sizeof(char)))
 		clean_exit(tree, MSG_MALLOCF);
-	ft_memcpy(cmd->input, src, len * sizeof(char));
-	cmd->input[len] = '\0';
+	ft_memcpy(new, ptr, len);
+	new[len] = '\0';
+	*str = new;
+}
+
+static void	copy_redirect(char **array, void *ptr, size_t len, t_tree *tree)
+{
+	while (array)
+		array++;
+	copy_str(array, ptr, len, tree);
 }
 
 static void	parse_io(t_cmd *cmd, t_token *tok, t_tree *tree)
@@ -127,30 +132,32 @@ static void	parse_io(t_cmd *cmd, t_token *tok, t_tree *tree)
 	if (tok->redirect == RDR_READ)
 		copy_redirect(cmd->input, src, len, tree);
 	if (tok->redirect == RDR_WRITE || tok->redirect == RDR_APPEND)
+		copy_redirect(cmd->output, src, len, tree);
 	if (tok->redirect == RDR_HEREDOC)
+		copy_str(&cmd->heredoc, src, len, tree);
 }
 
-static void	parse_io(t_cmd *cmd, t_token *tok, t_tree *tree)
-{
-	void	*src;
-	size_t	len;
-
-	src = tok->tok_chars->data;
-	len = tok->tok_chars->len;
-	if (tok->redirect == RDR_READ || tok->redirect == RDR_HEREDOC)
-	{
-		if (!ft_arena_alloc(tree->arena, (void **)&cmd->input,
-				(len + 1) * sizeof(char)))
-			clean_exit(tree, MSG_MALLOCF);
-		ft_memcpy(cmd->input, src, len * sizeof(char));
-		cmd->input[len] = '\0';
-	}
-	if (tok->redirect == RDR_WRITE || tok->redirect == RDR_APPEND)
-	{
-		if (!ft_arena_alloc(tree->arena, (void **)&cmd->output,
-				(len + 1) * sizeof(char)))
-			clean_exit(tree, MSG_MALLOCF);
-		ft_memcpy(cmd->output, src, len * sizeof(char));
-		cmd->output[len] = '\0';
-	}
-}
+// static void	parse_io(t_cmd *cmd, t_token *tok, t_tree *tree)
+// {
+// 	void	*src;
+// 	size_t	len;
+//
+// 	src = tok->tok_chars->data;
+// 	len = tok->tok_chars->len;
+// 	if (tok->redirect == RDR_READ || tok->redirect == RDR_HEREDOC)
+// 	{
+// 		if (!ft_arena_alloc(tree->arena, (void **)&cmd->input,
+// 				(len + 1) * sizeof(char)))
+// 			clean_exit(tree, MSG_MALLOCF);
+// 		ft_memcpy(cmd->input, src, len * sizeof(char));
+// 		cmd->input[len] = '\0';
+// 	}
+// 	if (tok->redirect == RDR_WRITE || tok->redirect == RDR_APPEND)
+// 	{
+// 		if (!ft_arena_alloc(tree->arena, (void **)&cmd->output,
+// 				(len + 1) * sizeof(char)))
+// 			clean_exit(tree, MSG_MALLOCF);
+// 		ft_memcpy(cmd->output, src, len * sizeof(char));
+// 		cmd->output[len] = '\0';
+// 	}
+// }
