@@ -41,6 +41,8 @@ typedef struct s_cmd
 	char	*input;
 	char	*output;
 	char	*heredoc;
+	char	*working_dir;
+	char	*old_working_dir;
 }	t_cmd;
 
 typedef struct s_keyval
