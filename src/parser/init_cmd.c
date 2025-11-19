@@ -12,37 +12,48 @@
 
 #include "../../inc/parsing.h"
 
-static void	set_cmd(t_cmd *cmd, size_t argc);
+static void	set_cmd(t_cmd *cmd, t_cmdv vars);
+static void null_array(char **array, size_t len);
 
 void	init_cmd_table(t_tree *tree)
 {
 	if (!vec_alloc(&tree->cmd_tab, tree->arena))
 		return (clean_exit(tree, MSG_MALLOCF));
-	if (!vec_new(tree->cmd_tab, 0, sizeof(t_token *)))
+	if (!vec_new(tree->cmd_tab, 0, sizeof(t_cmd *)))
 		clean_exit(tree, MSG_MALLOCF);
 }
 
-void	init_cmd(t_cmd **cmd, size_t argc, t_tree *tree)
+void	init_cmd(t_cmd **cmd, t_cmdv vars, t_tree *tree)
 {
 	t_cmd	*new;
 
 	new = NULL;
 	if (!ft_arena_alloc(tree->arena, (void **)&new, sizeof(t_cmd)))
 		clean_exit(tree, MSG_MALLOCF);
-	set_cmd(new, argc);
 	if (!ft_arena_alloc(tree->arena, (void **)&new->argv,
-			(argc + 1) * sizeof(char *)))
+			(vars.argc + 1) * sizeof(char *))
+		|| !ft_arena_alloc(tree->arena, (void **)&new->input,
+			(vars.inputc + 1) * sizeof(char *))
+		|| !ft_arena_alloc(tree->arena, (void **)&new->output,
+			(vars.outputc + 1) * sizeof(char *)))
 		clean_exit(tree, MSG_MALLOCF);
+	set_cmd(new, vars);
 	*cmd = new;
 	if (!vec_push(tree->cmd_tab, cmd))
 		clean_exit(tree, MSG_MALLOCF);
 }
 
-static void	set_cmd(t_cmd *cmd, size_t argc)
+static void	set_cmd(t_cmd *cmd, t_cmdv vars)
 {
-	cmd->argc = argc;
+	cmd->argc = vars.argc;
 	cmd->argv = NULL;
-	cmd->input = NULL;
-	cmd->output = NULL;
+	null_array(cmd->input, vars.inputc);
+	null_array(cmd->output, vars.outputc);
 	cmd->heredoc = NULL;
+}
+
+static void null_array(char **array, size_t len)
+{
+	while (len >= 0)
+		array[len] = NULL;
 }

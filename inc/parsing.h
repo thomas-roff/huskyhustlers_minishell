@@ -59,6 +59,15 @@ typedef struct s_token
 	size_t		read_size;
 }	t_token;
 
+typedef struct s_cmdv
+{
+	size_t	argc;
+	size_t	inputc;
+	size_t	outputc;
+	size_t	len;
+	size_t	i;
+}	t_cmdv;
+
 // PARSING
 int		parser(t_tree *tree, char *line, t_flag flag);
 
@@ -75,7 +84,7 @@ void	expandise(t_token *token, t_tree *tree);
 // COMMANDISER
 void	commandise(t_tree *tree, t_vec *tokens);
 void	init_cmd_table(t_tree *tree);
-void	init_cmd(t_cmd **cmd, size_t argc, t_tree *tree);
+void	init_cmd(t_cmd **cmd, t_cmdv vars, t_tree *tree);
 
 // UTILS
 bool	ft_ismetachar(char c);

@@ -38,8 +38,8 @@ typedef struct s_cmd
 {
 	size_t	argc;
 	char	**argv;
-	char	*input;
-	char	*output;
+	char	**input;
+	char	**output;
 	char	*heredoc;
 }	t_cmd;
 
