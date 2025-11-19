@@ -37,8 +37,8 @@ int	main(int argc, char **argv, char **envp)
 
 static int	parse_args(int argc, char **argv, t_flag *mode_flag)
 {
-	if (argc > 2 ||
-		(ft_strcmp(argv[1], "-debug") && ft_strcmp(argv[1], "-envp")))
+	if (argc > 2 || (ft_strcmp(argv[1], "-debug")
+			&& ft_strcmp(argv[1], "-envp")))
 	{
 		ft_putendl_fd(MSG_FLAGPMT, 2);
 		return (FAIL);
