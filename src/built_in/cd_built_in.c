@@ -45,7 +45,7 @@ int	change_envp(t_tree *tree, char *envp_key, char *new_path)
 	if (index != -1)
 	{
 		key_value = *(t_keyval**)vec_get(tree->envp, index);
-		free_ptr(key_value->value);
+		//free_ptr(key_value->value);
 		key_value->value = ft_strdup(new_path);
 	}
 	else //if envp_key doesnt exist yet
@@ -72,7 +72,7 @@ void	update_dir(t_cmd *command, char *cwd, t_tree *tree)
 	if (temp)
 		change_envp(tree, "OLDPWD", temp);
 
-	change_envp(tree, "PWD", temp);
+	change_envp(tree, "PWD", cwd);
 
 	if (command->old_working_dir != NULL)
 	{
@@ -132,7 +132,6 @@ char	*find_envp( t_tree *tree, char *path)
 int cd_built_in_command (t_cmd *command, t_tree *tree)
 {
 	char *path;
-
 	//switching to HOME
 	if (command->argv == NULL || command->argv[1] == NULL || is_space(command->argv[1][0]) == 1
 		|| command->argv[1][0] == '\0' || ft_strncmp(command->argv[1], "--", 3) == 0) 
