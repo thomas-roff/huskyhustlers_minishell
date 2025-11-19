@@ -6,7 +6,7 @@
 #    By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/24 14:57:58 by thblack-          #+#    #+#              #
-#    Updated: 2025/11/04 18:37:10 by thblack-         ###   ########.fr        #
+#    Updated: 2025/11/19 22:35:11 by thblack-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,7 @@ ASCII_FILES	= ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c \
 ASCII		= $(addprefix $(ASCII_DIR)/, $(ASCII_FILES))
 
 # GNL
-GNL_FILES	= get_next_line.c
+GNL_FILES	= gnl.c supergnl.c
 GNL			= $(addprefix $(GNL_DIR)/, $(GNL_FILES))
 
 # LISTS
