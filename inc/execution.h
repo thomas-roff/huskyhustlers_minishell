@@ -30,13 +30,11 @@ int	with_newline_flag(char *cmd_argv);
 
 //CD BUILT IN
 int cd_built_in_command (t_cmd *command, t_tree *tree);
-char	*find_envp(t_cmd *command, char *path, t_tree *tree);
+char	*find_envp( t_tree *tree, char *path);
 int	change_dir(t_cmd *command, char *path, t_tree *tree);
 void	update_dir(t_cmd *command, char *cwd, t_tree *tree);
-int	change_envp(t_cmd *command, char *envp_name, char *new_path, t_tree *tree);
-int	envp_index(t_cmd *command, char *envp_name, t_tree *tree);
-char	**add_new_envp(t_cmd *command, int size, t_tree *tree);
-int	envp_count(t_cmd *command, t_tree *tree);
+int	change_envp(t_tree *tree, char *envp_key, char *new_path);
+int	envp_index(t_tree *tree, char *envp_key);
 
 //ENV BUILT IN
 int	env_built_in_command(t_cmd *command);

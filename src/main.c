@@ -76,7 +76,7 @@ static int	minishell(char **envp, t_flag mode_flag)
 		if (!tree.envp)
 			envp_init(&tree, envp, mode_flag);
 		// TODO: space for executor to run in minishell loop
-		// executor(&tree, mode_flag);
+		executor(&tree, mode_flag);
 	}
 }
 

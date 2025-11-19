@@ -12,82 +12,55 @@
 //the max linux can store a full path is 4096 bytes
 //for error handling, there are some cases where you have to return error code and not exit 
 
-int	envp_count(t_cmd *command, t_tree *tree)
-{
-	int	i;
-
-	i = 0;
-	while (tree->envp && tree->envp[i])
-		i++;
-	return (i);
-}
-
-char	**add_new_envp(t_cmd *command, int size, t_tree *tree)
-{
-	char	**new_envp;
-	int		i;
-
-	new_envp = ft_calloc(size + 1, sizeof * new_envp);
-	if (!new_envp)
-		return (NULL);
-	i = 0;
-	while (tree->envp[i] != NULL && i < size)
-	{
-		new_envp[i] = ft_strdup(tree->envp[i]);
-		free_ptr(tree->envp[i]);
-		i++;
-	}
-	free(tree->envp);
-	return (new_envp);
-}
-
-int	envp_index(t_cmd *command, char *envp_name, t_tree *tree)
+int	envp_index(t_tree *tree, char *envp_key)
 {
 	int		i;
-	char	*temp;
+	t_keyval	*key_value;
 
-	temp = ft_strjoin(envp_name, "=");
-	if (!temp)
+	i = 0;
+
+	if (!tree || !tree->envp)
 		return (-1);
-	i = 0;
-	while (tree->envp[i] != NULL)
+
+	while (i < (int)tree->envp->len)
 	{
-		if (ft_strncmp(temp, tree->envp[i], ft_strlen(temp)) == 0)
-		{
-			free_ptr(temp);
+		key_value = *(t_keyval **)vec_get(tree->envp, i);
+		if (strcmp(key_value->key, envp_key) == 0)
 			return (i);
-		}
 		i++;
 	}
-	free_ptr(temp);
 	return (-1);
 }
 
-int	change_envp(t_cmd *command, char *envp_name, char *new_path, t_tree *tree)
+int	change_envp(t_tree *tree, char *envp_key, char *new_path)
 {
 	int		index;
-	char	*temp;
+	t_keyval *key_value;
 
 	if (new_path == NULL)
 		new_path = "";
-	temp = ft_strjoin("=", new_path);
-	if (!temp)
-		return (0);
-	index = envp_index(command, envp_name, tree); //if envp_name exist
-	if (index != -1 && tree->envp[index] != NULL)
+
+	index = envp_index(tree, envp_key);
+
+	if (index != -1)
 	{
-		free_ptr(tree->envp[index]);
-		tree->envp[index] = ft_strjoin(envp_name, temp);
+		key_value = *(t_keyval**)vec_get(tree->envp, index);
+		free_ptr(key_value->value);
+		key_value->value = ft_strdup(new_path);
 	}
-	else //if envp_name doesnt exist yet
+	else //if envp_key doesnt exist yet
 	{
-		index = envp_count(command, tree);
-		tree->envp = add_new_envp(command, index + 1, tree);
-		if (!tree->envp)
+		key_value = malloc(sizeof(t_keyval));
+		if (!key_value)
 			return (0);
-		tree->envp[index] = ft_strjoin(envp_name, temp);
+		key_value->key = ft_strdup(envp_key);
+		key_value->value = ft_strdup(new_path);
+
+		if (!key_value->key || !key_value->value) //FIXME: Do I need to free the memory?
+			return (0);
+		vec_push(tree->envp, &key_value);
+		return (1);
 	}
-	free_ptr(temp);
 	return (1);
 }
 
@@ -98,9 +71,9 @@ void	update_dir(t_cmd *command, char *cwd, t_tree *tree)
 	temp = find_envp(tree, "PWD");
 	if (temp)
 		change_envp(tree, "OLDPWD", temp);
-	
-	change_envp(command, "OLDPWD", find_envp(tree, "PWD"), tree);
-	change_envp(command, "PWD", cwd, tree);
+
+	change_envp(tree, "PWD", temp);
+
 	if (command->old_working_dir != NULL)
 	{
 		free_ptr(command->old_working_dir);
@@ -142,11 +115,10 @@ int	change_dir(t_cmd *command, char *path, t_tree *tree)
 char	*find_envp( t_tree *tree, char *path)
 {
 	int		i;
-	char	*temp;
 	t_keyval *key_value;
 
 	i = 0;
-	while (i < tree->envp->len)
+	while (i < (int)tree->envp->len)
 	{
 		key_value = *(t_keyval **)vec_get(tree->envp, i);
 		if (strcmp(key_value->key, path) == 0)
@@ -172,7 +144,6 @@ int cd_built_in_command (t_cmd *command, t_tree *tree)
 		}
 		change_dir(command, path, tree);
 		return (0);
-		
 	}
 	if (command->argv[2] != NULL)
 		return(print_error("cd", "too many arguments"));
