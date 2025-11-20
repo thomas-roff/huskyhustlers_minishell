@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/13 17:46:24 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/20 12:10:04 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/20 16:52:31 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ void	init_child_signals(void)
 {
 	struct sigaction	sa;
 
+	ft_memset(&sa, 0, sizeof(sa));
 	sa.sa_handler = &handle_sig;
 	sa.sa_flags = SA_RESTART;
 	sigaction(SIGINT, &sa, NULL);

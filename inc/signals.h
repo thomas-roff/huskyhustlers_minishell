@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/13 17:25:14 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/20 12:21:43 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/20 17:06:42 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,14 @@
 # include "minishell.h"
 # include "../libft/inc/libft.h"
 
-# define ON 1
-# define OFF 0
+# define TURN_ON 1
+# define TURN_OFF 0
+
+# define EXIT_CTRLD 0 // 0 for success
+# define EXIT_CTRLC 130 // 130 for 128 + 2 (2 is SIGINT)
+# define EXIT_CTRLQ 134 // 134 for 128 + 8 (8 is SIGQUIT)
 
 // SIGNALS
-void	init_signals(int action);
+void	init_ms_signals(int action);
 
 #endif
