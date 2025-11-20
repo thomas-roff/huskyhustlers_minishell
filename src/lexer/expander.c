@@ -24,8 +24,8 @@ void	expandise(t_token *tok, t_tree *tree)
 
 	tmp = NULL;
 	i = 0;
-	if (!vec_alloc(&tmp, tree->arena))
-		clean_exit(tree, MSG_MALLOCF);
+	if (!vec_alloc(&tmp, tree->a_buf))
+		exit_parser(tree, MSG_MALLOCF);
 	while (i < tok->tok_chars->len)
 	{
 		if (((char *)tok->tok_chars->data)[i] == '$')
@@ -54,13 +54,13 @@ static size_t	parse_exp(t_token *tok, t_vec *tmp, size_t i, t_tree *tree)
 	}
 	if (!vec_from(tmp, vec_get(tok->tok_chars, start),
 			len + 1, sizeof(char)))
-		clean_exit(tree, MSG_MALLOCF);
+		exit_parser(tree, MSG_MALLOCF);
 	tmp->data[len] = '\0';
 	rm_exp(tok, &start, len, braces);
 	if (!expand_env_var(tmp, tree))
 		return (0);
 	if (!vec_inpend(tok->tok_chars, tmp, start))
-		clean_exit(tree, MSG_MALLOCF);
+		exit_parser(tree, MSG_MALLOCF);
 	return (tmp->len);
 }
 
@@ -93,7 +93,7 @@ static int	expand_env_var(t_vec *tmp, t_tree *tree)
 		return (FAIL);
 	vec_reset(tmp);
 	if (!vec_from(tmp, (void *)env_var, ft_strlen(env_var), sizeof(char)))
-		clean_exit(tree, MSG_MALLOCF);
+		exit_parser(tree, MSG_MALLOCF);
 	vec_pop(NULL, tmp);
 	return (SUCCESS);
 }

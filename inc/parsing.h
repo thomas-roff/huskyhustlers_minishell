@@ -14,7 +14,7 @@
 # define PARSING_H
 
 # include "minishell.h"
-# include "messsages.h"
+# include "messages.h"
 # include "../libft/inc/libft.h"
 
 // FORWARD DECLARATIONS (Actual definitions in libft.h)
@@ -87,7 +87,7 @@ void	init_cmd(t_cmd **cmd, t_cmdv vars, t_tree *tree);
 void	get_cmd_vars(t_cmdv *vars, t_vec *tokens, size_t i);
 
 // ENVP
-void	envp_init(t_tree *tree, char **envp, t_flag mode_flag);
+void	envp_init(t_tree *tree, char **envp);
 
 // UTILS
 bool	ft_ismetachar(char c);

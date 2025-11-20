@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 17:58:39 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/20 12:00:00 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/20 17:00:41 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 extern volatile sig_atomic_t	g_receipt;
 
-static int	parse_args(int argc, char **argv, t_flag *mode_flag);
+static int	handle_flags(int argc, char **argv, t_flag *mode_flag);
 static int	minishell(char **envp, t_flag mode_flag);
 static void	init_minishell(t_tree *tree);
 static int	reset_minishell(t_tree *tree, char **line);
@@ -25,17 +25,16 @@ static int	reset_minishell(t_tree *tree, char **line);
 int	main(int argc, char **argv, char **envp)
 {
 	t_flag	mode_flag;
-	// sig_init();
 	mode_flag = FLAG_DEFAULT;
 	if (argc > 1)
-		if (!parse_args(argc, argv, &mode_flag))
+		if (!handle_flags(argc, argv, &mode_flag))
 			return (EXIT_SUCCESS);
 	if (!minishell(envp, mode_flag))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
-static int	parse_args(int argc, char **argv, t_flag *mode_flag)
+static int	handle_flags(int argc, char **argv, t_flag *mode_flag)
 {
 	int		i;
 	t_flag	tmp;
@@ -68,43 +67,46 @@ static int	minishell(char **envp, t_flag mode_flag)
 	char	*line;
 	t_tree	tree;
 
-	line = NULL;
-	// TODO: Build ctrl-C, D and \ handling
-	// init_signals();
+	init_ms_signals(TURN_ON);
 	init_minishell(&tree);
+	line = NULL;
 	while (1)
 	{
 		if (!reset_minishell(&tree, &line))
 			return (FAIL);
 		line = readline("cmd> ");
 		add_history(line);
-		if (ft_strncmp(line, "exit", ft_strlen(line)) == 0)
+		if (!line || ft_strncmp(line, "exit", ft_strlen(line)) == 0)
 		{
 			if (!reset_minishell(&tree, &line))
 				return (FAIL);
 			if (mode_flag == FLAG_DEBUG || mode_flag == FLAG_DEBUG_ENVP)
-				ft_print_arena_list(tree.arena);
+				ft_print_arena_list(tree.a_buf);
 			return (SUCCESS);
 		}
 		parser(&tree, line, mode_flag);
 		if (!tree.envp)
-			envp_init(&tree, envp, mode_flag);
+			envp_init(&tree, envp);
 		// TODO: space for executor to run in minishell loop
 		// executor(&tree, mode_flag);
+		if (mode_flag == FLAG_ENVP || mode_flag == FLAG_DEBUG_ENVP)
+			print_envp(&tree);
 	}
 }
 
 static void	init_minishell(t_tree *tree)
 {
+	g_receipt = 0;
 	tree->cmd_tab = NULL;
 	tree->envp = NULL;
-	tree->arena = NULL;
+	tree->a_buf = NULL;
+	tree->a_sys = NULL;
 }
 
 static int	reset_minishell(t_tree *tree, char **line)
 {
-	if (tree->arena)
-		if (!ft_arena_list_free(&tree->arena))
+	if (tree->a_buf)
+		if (!ft_arena_list_free(&tree->a_buf))
 			return (ft_perror(MSG_MALLOCF));
 	tree->cmd_tab = NULL;
 	if (*line)

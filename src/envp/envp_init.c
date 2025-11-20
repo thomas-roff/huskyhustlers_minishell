@@ -16,10 +16,12 @@ volatile sig_atomic_t	g_receipt;
 
 static void	init_keyvalvec(t_tree *tree)
 {
-	if (!vec_alloc(&tree->envp, tree->arena)
+	if (!ft_arena_init(&tree->a_sys, ARENA_BUF))
+		exit_parser(tree, MSG_MALLOCF);
+	if (!vec_alloc(&tree->envp, tree->a_sys)
 		|| !vec_new(tree->envp, 0, sizeof(t_keyval *))
 	)
-		clean_exit(tree, MSG_MALLOCF);
+		exit_parser(tree, MSG_MALLOCF);
 }
 
 static void	init_keyval(t_keyval **dst, t_tree *tree)
@@ -27,8 +29,8 @@ static void	init_keyval(t_keyval **dst, t_tree *tree)
 	t_keyval	*new;
 
 	new = NULL;
-	if (!ft_arena_alloc(tree->arena, (void **)&new, sizeof(t_keyval)))
-		clean_exit(tree, MSG_MALLOCF);
+	if (!ft_arena_alloc(tree->a_sys, (void **)&new, sizeof(t_keyval)))
+		exit_parser(tree, MSG_MALLOCF);
 	new->key = NULL;
 	new->value = NULL;
 	*dst = new;
@@ -47,21 +49,21 @@ static int	parse_envp_keyvalue(t_keyval **dst, char *src, t_tree *tree)
 	init_keyval(&tmp, tree);
 	while (src[i] && src[i] != '=')
 		i++;
-	if (!ft_superstrndup(&tmp->key, src, i, tree->arena))
-		clean_exit(tree, MSG_MALLOCF);
+	if (!ft_superstrndup(&tmp->key, src, i, tree->a_sys))
+		exit_parser(tree, MSG_MALLOCF);
 	if (src[i] != '=')
 		return (SUCCESS);
 	i++;
 	j = 0;
 	while (src[i + j])
 		j++;
-	if (!ft_superstrndup(&tmp->value, src + i, j, tree->arena))
-		clean_exit(tree, MSG_MALLOCF);
+	if (!ft_superstrndup(&tmp->value, src + i, j, tree->a_sys))
+		exit_parser(tree, MSG_MALLOCF);
 	*dst = tmp;
 	return (SUCCESS);
 }
 
-void	envp_init(t_tree *tree, char **envp, t_flag mode_flag)
+void	envp_init(t_tree *tree, char **envp)
 {
 	t_keyval	*tmp;
 	char		**export;
@@ -75,17 +77,8 @@ void	envp_init(t_tree *tree, char **envp, t_flag mode_flag)
 	{
 		if (!parse_envp_keyvalue(&tmp, envp[i], tree)
 			|| !vec_push(tree->envp, &tmp))
-			clean_exit(tree, MSG_MALLOCF);
+			exit_parser(tree, MSG_MALLOCF);
 		tmp = NULL;
 		i++;
-	}
-	if (mode_flag == FLAG_ENVP || mode_flag == FLAG_DEBUG_ENVP)
-	{
-		write(1, "\n", 1);
-		if (!envp_export(&export, tree))
-			clean_exit(tree, MSG_MALLOCF);
-		while (*export)
-			ft_printf("%s\n", *export++);
-		write(1, "\n", 1);
 	}
 }

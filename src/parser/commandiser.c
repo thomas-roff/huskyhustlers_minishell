@@ -67,7 +67,7 @@ static void	parse_argv(t_cmd *cmd, t_token *tok, size_t argi, t_tree *tree)
 	src = tok->tok_chars->data;
 	len = tok->tok_chars->len;
 	arg = NULL;
-	ft_superstrndup(&arg, src, len, tree->arena);
+	ft_superstrndup(&arg, src, len, tree->a_buf);
 	arg[len] = '\0';
 	cmd->argv[argi] = arg;
 	cmd->argv[argi + 1] = NULL;
@@ -77,7 +77,7 @@ static void	copy_redirect(char **array, void *ptr, size_t len, t_tree *tree)
 {
 	while (*array)
 		array++;
-	ft_superstrndup(array, ptr, len, tree->arena);
+	ft_superstrndup(array, ptr, len, tree->a_buf);
 	array++;
 	*array = NULL;
 }
@@ -94,5 +94,5 @@ static void	parse_io(t_cmd *cmd, t_token *tok, t_tree *tree)
 	if (tok->redirect == RDR_WRITE || tok->redirect == RDR_APPEND)
 		copy_redirect(cmd->output, src, len, tree);
 	if (tok->redirect == RDR_HEREDOC)
-		ft_superstrndup(&cmd->heredoc, src, len, tree->arena);
+		ft_superstrndup(&cmd->heredoc, src, len, tree->a_buf);
 }

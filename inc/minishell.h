@@ -13,7 +13,7 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "messsages.h"
+# include "messages.h"
 # include "../libft/inc/libft.h"
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -54,7 +54,8 @@ typedef struct s_tree
 {
 	t_vec	*cmd_tab;
 	t_vec	*envp;
-	t_arena	*arena;
+	t_arena	*a_sys;
+	t_arena	*a_buf;
 }	t_tree;
 
 // ENVIRONMENT
@@ -71,10 +72,10 @@ void	print_tokens_vars(t_vec *tokens);
 void	print_tok_vars(t_token *tok);
 void	print_cmd_tab(t_vec *cmd_tab);
 void	print_debugging(t_vec *tokens, t_tree *tree);
-void	print_envp(t_vec *envp);
+void	print_envp(t_tree *tree);
 
 // EXIT
 int		ft_perror(char *s);
-void	clean_exit(t_tree *tree, char *error);
+void	exit_parser(t_tree *tree, char *error);
 
 #endif

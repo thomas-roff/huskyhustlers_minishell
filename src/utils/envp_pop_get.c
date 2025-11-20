@@ -48,14 +48,14 @@ int	envp_export(char ***dst, t_tree *tree)
 		return (FAIL);
 	if (!tree->envp || tree->envp->len == 0)
 		return (SUCCESS);
-	if (!ft_arena_alloc(tree->arena, (void **)&new,
+	if (!ft_arena_alloc(tree->a_buf, (void **)&new,
 			(tree->envp->len + 1) * sizeof(char *)))
 		return (FAIL);
 	while (i < tree->envp->len)
 	{
 		new[i] = NULL;
 		if (!envp_export_helper(&new[i],
-				*(const t_keyval **)vec_get(tree->envp, i), tree->arena))
+				*(const t_keyval **)vec_get(tree->envp, i), tree->a_buf))
 			return (FAIL);
 		i++;
 	}

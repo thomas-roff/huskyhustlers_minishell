@@ -22,7 +22,7 @@ void	tokenise(t_token *tok, t_redirect *rdr_flag, char *line, t_tree *tree)
 
 	i = 0;
 	if (!tok || !line || !tree)
-		clean_exit(tree, MSG_UNINTAL);
+		exit_parser(tree, MSG_UNINTAL);
 	while (ft_isspace(line[i]))
 		i++;
 	if (line[i] == '"' || line[i] == '\'')
@@ -49,7 +49,7 @@ static void	tokenise_quote(t_token *tok, char *line, t_tree *tree)
 	}
 	if (i > 0)
 		if (!vec_from(tok->tok_chars, line + 1, i, sizeof(char)))
-			clean_exit(tree, MSG_MALLOCF);
+			exit_parser(tree, MSG_MALLOCF);
 	tok->type = TOK_QUOTATION;
 	if (tok->quote_char == '\'')
 		tok->quote_type = QUO_SINGLE;
@@ -72,7 +72,7 @@ static void	tokenise_word(t_token *tok, char *line, t_tree *tree)
 	if (i > 0)
 	{
 		if (!vec_from(tok->tok_chars, line, i, sizeof(char)))
-			clean_exit(tree, MSG_MALLOCF);
+			exit_parser(tree, MSG_MALLOCF);
 	}
 	while (ft_isspace(line[i]))
 		i++;

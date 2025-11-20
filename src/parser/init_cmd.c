@@ -16,10 +16,10 @@ static void	set_cmd(t_cmd *cmd, t_cmdv vars);
 
 void	init_cmd_table(t_tree *tree, t_cmdv *vars)
 {
-	if (!vec_alloc(&tree->cmd_tab, tree->arena))
-		return (clean_exit(tree, MSG_MALLOCF));
+	if (!vec_alloc(&tree->cmd_tab, tree->a_buf))
+		return (exit_parser(tree, MSG_MALLOCF));
 	if (!vec_new(tree->cmd_tab, 0, sizeof(t_cmd *)))
-		clean_exit(tree, MSG_MALLOCF);
+		exit_parser(tree, MSG_MALLOCF);
 	vars->len = 0;
 	vars->argc = 0;
 	vars->inputc = 0;
@@ -31,24 +31,24 @@ void	init_cmd(t_cmd **cmd, t_cmdv vars, t_tree *tree)
 	t_cmd	*new;
 
 	new = NULL;
-	if (!ft_arena_alloc(tree->arena, (void **)&new, sizeof(t_cmd)))
-		clean_exit(tree, MSG_MALLOCF);
+	if (!ft_arena_alloc(tree->a_buf, (void **)&new, sizeof(t_cmd)))
+		exit_parser(tree, MSG_MALLOCF);
 	if (vars.argc > 0)
-		if (!ft_arena_alloc(tree->arena, (void **)&new->argv,
+		if (!ft_arena_alloc(tree->a_buf, (void **)&new->argv,
 				(vars.argc + 1) * sizeof(char *)))
-			clean_exit(tree, MSG_MALLOCF);
+			exit_parser(tree, MSG_MALLOCF);
 	if (vars.inputc > 0)
-		if (!ft_arena_alloc(tree->arena, (void **)&new->input,
+		if (!ft_arena_alloc(tree->a_buf, (void **)&new->input,
 				(vars.inputc + 1) * sizeof(char *)))
-			clean_exit(tree, MSG_MALLOCF);
+			exit_parser(tree, MSG_MALLOCF);
 	if (vars.outputc > 0)
-		if (!ft_arena_alloc(tree->arena, (void **)&new->output,
+		if (!ft_arena_alloc(tree->a_buf, (void **)&new->output,
 				(vars.outputc + 1) * sizeof(char *)))
-			clean_exit(tree, MSG_MALLOCF);
+			exit_parser(tree, MSG_MALLOCF);
 	set_cmd(new, vars);
 	*cmd = new;
 	if (!vec_push(tree->cmd_tab, cmd))
-		clean_exit(tree, MSG_MALLOCF);
+		exit_parser(tree, MSG_MALLOCF);
 }
 
 static void	set_cmd(t_cmd *cmd, t_cmdv vars)

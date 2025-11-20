@@ -49,11 +49,11 @@ static void	init_tok(t_token **tok, t_vec *tokens, t_tree *tree)
 	t_token	*new;
 
 	new = NULL;
-	if (!ft_arena_alloc(tree->arena, (void **)&new, sizeof(t_token)))
-		clean_exit(tree, MSG_MALLOCF);
+	if (!ft_arena_alloc(tree->a_buf, (void **)&new, sizeof(t_token)))
+		exit_parser(tree, MSG_MALLOCF);
 	new->tok_chars = NULL;
-	if (!vec_alloc(&new->tok_chars, tree->arena))
-		clean_exit(tree, MSG_MALLOCF);
+	if (!vec_alloc(&new->tok_chars, tree->a_buf))
+		exit_parser(tree, MSG_MALLOCF);
 	new->type = TOK_DEFAULT;
 	new->redirect = RDR_DEFAULT;
 	new->quote_type = QUO_DEFAULT;
@@ -62,7 +62,7 @@ static void	init_tok(t_token **tok, t_vec *tokens, t_tree *tree)
 	new->read_size = 1;
 	*tok = new;
 	if (!vec_push(tokens, tok))
-		clean_exit(tree, MSG_MALLOCF);
+		exit_parser(tree, MSG_MALLOCF);
 }
 
 static bool	ft_nothingtodo(char **line)
@@ -77,11 +77,11 @@ static bool	ft_nothingtodo(char **line)
 static void	init_lexer(t_vec **tokens, t_tree *tree)
 {
 	if (!tokens || !tree)
-		clean_exit(tree, MSG_UNINTAL);
-	if (!ft_arena_init(&tree->arena, ARENA_BUF))
-		clean_exit(tree, MSG_MALLOCF);
-	if (!vec_alloc(tokens, tree->arena))
-		clean_exit(tree, MSG_MALLOCF);
+		exit_parser(tree, MSG_UNINTAL);
+	if (!ft_arena_init(&tree->a_buf, ARENA_BUF))
+		exit_parser(tree, MSG_MALLOCF);
+	if (!vec_alloc(tokens, tree->a_buf))
+		exit_parser(tree, MSG_MALLOCF);
 	if (!vec_new(*tokens, 0, sizeof(t_token *)))
-		clean_exit(tree, MSG_MALLOCF);
+		exit_parser(tree, MSG_MALLOCF);
 }
