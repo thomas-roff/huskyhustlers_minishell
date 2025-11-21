@@ -14,7 +14,7 @@
 
 static void	tokenise_quote(t_token *tok, char *line, t_tree *tree);
 static void	tokenise_word(t_token *tok, char *line, t_tree *tree);
-static void	handle_io(t_token *tok, t_redirect *rdr_flag);
+static void	tokenise_io_pair(t_token *tok, t_redirect *rdr_flag);
 
 void	tokenise(t_token *tok, t_redirect *rdr_flag, char *line, t_tree *tree)
 {
@@ -28,10 +28,10 @@ void	tokenise(t_token *tok, t_redirect *rdr_flag, char *line, t_tree *tree)
 	if (line[i] == '"' || line[i] == '\'')
 		tokenise_quote(tok, line + i, tree);
 	else if (ft_ismetachar(line[i]))
-		handle_redirect(tok, line + i);
+		tokenise_redirect(tok, line + i);
 	else
 		tokenise_word(tok, line + i, tree);
-	handle_io(tok, rdr_flag);
+	tokenise_io_pair(tok, rdr_flag);
 	tok->read_size += i;
 }
 
@@ -80,7 +80,7 @@ static void	tokenise_word(t_token *tok, char *line, t_tree *tree)
 	tok->read_size = i;
 }
 
-static void	handle_io(t_token *tok, t_redirect *rdr_flag)
+static void	tokenise_io_pair(t_token *tok, t_redirect *rdr_flag)
 {
 	if (*rdr_flag != RDR_DEFAULT)
 	{

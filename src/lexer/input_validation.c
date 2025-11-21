@@ -35,7 +35,7 @@ int	valid_input(char *line)
 	while (i < len)
 	{
 		ft_isquote(&quote, line[i]);
-		if (line[i] == '$' && line[i + 1] == '{' && ft_isbadsub(line + i + 2))
+		if (line[i] == '$' && ft_isbadsub(line + i + 1))
 			return (ft_perror(MSG_BAD_SUB));
 		if (line[i] == '|' && ft_isdblpipe(line + i))
 			return (ft_perror(MSG_SYX_PIP));
@@ -50,11 +50,9 @@ static bool	ft_isbadsub(char *line)
 {
 	if (ft_isdigit(*line))
 		return (true);
-	while (*line)
+	while (*line && *line != ' ' && *line != '$')
 	{
-		if (*line == '}')
-			return (false);
-		if (!ft_isalnum(*line) && *line != '_')
+		if (!ft_isalnum(*line) && *line != '_' && *line != '?')
 			return (true);
 		line++;
 	}

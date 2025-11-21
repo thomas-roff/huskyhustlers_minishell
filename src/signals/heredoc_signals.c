@@ -17,7 +17,7 @@ static void	handle_sig(int sig)
 	g_receipt = sig;
 }
 
-void	init_heredoc_signals(void)
+void	heredoc_signals_init(void)
 {
 	struct sigaction	sa;
 

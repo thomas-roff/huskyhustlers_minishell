@@ -19,8 +19,8 @@ extern volatile sig_atomic_t	g_receipt;
 
 static int	handle_flags(int argc, char **argv, t_flag *mode_flag);
 static int	minishell(char **envp, t_flag mode_flag);
-static void	init_minishell(t_tree *tree);
-static int	reset_minishell(t_tree *tree, char **line);
+static void	minishell_init(t_tree *tree);
+static int	minishell_reset(t_tree *tree, char **line);
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -67,18 +67,18 @@ static int	minishell(char **envp, t_flag mode_flag)
 	char	*line;
 	t_tree	tree;
 
-	init_ms_signals(TURN_ON);
-	init_minishell(&tree);
+	readline_signals_init(TURN_ON);
+	minishell_init(&tree);
 	line = NULL;
 	while (1)
 	{
-		if (!reset_minishell(&tree, &line))
+		if (!minishell_reset(&tree, &line))
 			return (FAIL);
 		line = readline("cmd> ");
 		add_history(line);
 		if (!line || ft_strncmp(line, "exit", ft_strlen(line)) == 0)
 		{
-			if (!reset_minishell(&tree, &line))
+			if (!minishell_reset(&tree, &line))
 				return (FAIL);
 			if (mode_flag == FLAG_DEBUG || mode_flag == FLAG_DEBUG_ENVP)
 				ft_print_arena_list(tree.a_buf);
@@ -94,7 +94,7 @@ static int	minishell(char **envp, t_flag mode_flag)
 	}
 }
 
-static void	init_minishell(t_tree *tree)
+static void	minishell_init(t_tree *tree)
 {
 	g_receipt = 0;
 	tree->cmd_tab = NULL;
@@ -103,7 +103,7 @@ static void	init_minishell(t_tree *tree)
 	tree->a_sys = NULL;
 }
 
-static int	reset_minishell(t_tree *tree, char **line)
+static int	minishell_reset(t_tree *tree, char **line)
 {
 	if (tree->a_buf)
 		if (!ft_arena_list_free(&tree->a_buf))

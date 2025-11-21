@@ -12,8 +12,8 @@
 
 #include "../../inc/parsing.h"
 
-static void	init_lexer(t_vec **tokens, t_tree *tree);
-static void	init_tok(t_token **tok, t_vec *tokens, t_tree *tree);
+static void	lexer_init(t_vec **tokens, t_tree *tree);
+static void	tok_init(t_token **tok, t_vec *tokens, t_tree *tree);
 static bool	ft_nothingtodo(char **line);
 
 int	parser(t_tree *tree, char *line, t_flag mode_flag)
@@ -29,10 +29,10 @@ int	parser(t_tree *tree, char *line, t_flag mode_flag)
 	tokens = NULL;
 	tok = NULL;
 	rdr_flag = RDR_DEFAULT;
-	init_lexer(&tokens, tree);
+	lexer_init(&tokens, tree);
 	while (*line)
 	{
-		init_tok(&tok, tokens, tree);
+		tok_init(&tok, tokens, tree);
 		tokenise(tok, &rdr_flag, line, tree);
 		if (tok->expand == true)
 			expandise(tok, tree);
@@ -44,7 +44,7 @@ int	parser(t_tree *tree, char *line, t_flag mode_flag)
 	return (SUCCESS);
 }
 
-static void	init_tok(t_token **tok, t_vec *tokens, t_tree *tree)
+static void	tok_init(t_token **tok, t_vec *tokens, t_tree *tree)
 {
 	t_token	*new;
 
@@ -74,7 +74,7 @@ static bool	ft_nothingtodo(char **line)
 	return (false);
 }
 
-static void	init_lexer(t_vec **tokens, t_tree *tree)
+static void	lexer_init(t_vec **tokens, t_tree *tree)
 {
 	if (!tokens || !tree)
 		exit_parser(tree, MSG_UNINTAL);

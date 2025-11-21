@@ -75,16 +75,16 @@ int		valid_input(char *line);
 
 // TOKENISER
 void	tokenise(t_token *tok, t_redirect *rdr_flag, char *line, t_tree *tree);
-void	handle_redirect(t_token *tok, char *line);
+void	tokenise_redirect(t_token *tok, char *line);
 
 // EXPANDER
 void	expandise(t_token *token, t_tree *tree);
 
 // COMMANDISER
 void	commandise(t_tree *tree, t_vec *tokens);
-void	init_cmd_table(t_tree *tree, t_cmdv *vars);
-void	init_cmd(t_cmd **cmd, t_cmdv vars, t_tree *tree);
-void	get_cmd_vars(t_cmdv *vars, t_vec *tokens, size_t i);
+void	cmd_table_init(t_tree *tree, t_cmdv *vars);
+void	cmd_init(t_cmd **cmd, t_cmdv vars, t_tree *tree);
+void	cmd_vars_get(t_cmdv *vars, t_vec *tokens, size_t i);
 
 // ENVP
 void	envp_init(t_tree *tree, char **envp);

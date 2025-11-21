@@ -17,7 +17,7 @@ static void	handle_sig(int sig)
 	g_receipt = sig;
 }
 
-void	init_child_signals(void)
+void	child_signals_init(void)
 {
 	struct sigaction	sa;
 

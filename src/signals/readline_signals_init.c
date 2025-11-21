@@ -30,7 +30,7 @@ static void	handle_sig(int sig)
 	}
 }
 
-void	init_ms_signals(int	action)
+void	readline_signals_init(int	action)
 {
 	struct sigaction	sa;
 

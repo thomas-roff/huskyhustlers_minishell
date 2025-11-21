@@ -12,10 +12,10 @@
 
 #include "../../inc/parsing.h"
 
-static size_t	parse_exp(t_token *tok, t_vec *tmp, size_t i, t_tree *tree);
-static size_t	exp_len(size_t *start, bool *braces, t_token *tok, size_t i);
+static size_t	expand_parse(t_token *tok, t_vec *tmp, size_t i, t_tree *tree);
+static size_t	expand_len(size_t *start, t_token *tok, size_t i);
 static int		expand_env_var(t_vec *tmp, t_tree *tree);
-static void		rm_exp(t_token *tok, size_t *start, size_t len, bool braces);
+static void		expand_rm(t_token *tok, size_t *start, size_t len);
 
 void	expandise(t_token *tok, t_tree *tree)
 {
@@ -30,33 +30,31 @@ void	expandise(t_token *tok, t_tree *tree)
 	{
 		if (((char *)tok->tok_chars->data)[i] == '$')
 		{
-			i += parse_exp(tok, tmp, i, tree);
+			i += expand_parse(tok, tmp, i, tree);
 			if (tmp->len > 0)
 				vec_reset(tmp);
 		}
-		i++;
+		else
+			i++;
 	}
 }
 
-static size_t	parse_exp(t_token *tok, t_vec *tmp, size_t i, t_tree *tree)
+static size_t	expand_parse(t_token *tok, t_vec *tmp, size_t i, t_tree *tree)
 {
 	size_t	start;
 	size_t	len;
-	bool	braces;
 
 	start = 0;
-	braces = false;
-	len = exp_len(&start, &braces, tok, i);
+	len = expand_len(&start, tok, i);
 	if (len == 0)
 	{
-		rm_exp(tok, &start, len, braces);
+		expand_rm(tok, &start, len);
 		return (0);
 	}
-	if (!vec_from(tmp, vec_get(tok->tok_chars, start),
-			len + 1, sizeof(char)))
+	if (!vec_from(tmp, vec_get(tok->tok_chars, start), len + 1, sizeof(char)))
 		exit_parser(tree, MSG_MALLOCF);
 	tmp->data[len] = '\0';
-	rm_exp(tok, &start, len, braces);
+	expand_rm(tok, &start, len);
 	if (!expand_env_var(tmp, tree))
 		return (0);
 	if (!vec_inpend(tok->tok_chars, tmp, start))
@@ -64,21 +62,19 @@ static size_t	parse_exp(t_token *tok, t_vec *tmp, size_t i, t_tree *tree)
 	return (tmp->len);
 }
 
-static size_t	exp_len(size_t *start, bool *braces, t_token *tok, size_t i)
+static size_t	expand_len(size_t *start, t_token *tok, size_t i)
 {
+	char	*str;
+	size_t	str_len;
 	size_t	len;
 
+	i++;
+	str = (char *)tok->tok_chars->data;
+	str_len = tok->tok_chars->len;
 	len = 0;
-	if (((char *)tok->tok_chars->data)[i + 1] == '{')
-	{
-		i += 2;
-		*braces = true;
-	}
-	else
-		i += 1;
-	while (i + len < tok->tok_chars->len
-		&& ((char *)tok->tok_chars->data)[i + len] != '}'
-		&& ((char *)tok->tok_chars->data)[i + len] != ' ')
+	while (i + len < str_len
+		&& str[i + len] != '$'
+		&& str[i + len] != ' ')
 		len++;
 	*start = i;
 	return (len);
@@ -98,17 +94,9 @@ static int	expand_env_var(t_vec *tmp, t_tree *tree)
 	return (SUCCESS);
 }
 
-static void	rm_exp(t_token *tok, size_t *start, size_t len, bool braces)
+static void	expand_rm(t_token *tok, size_t *start, size_t len)
 {
-	if (braces == true)
-	{
-		*start -= 2;
-		len += 3;
-	}
-	else
-	{
-		*start -= 1;
-		len += 1;
-	}
+	*start -= 1;
+	len += 1;
 	vec_trim(tok->tok_chars, *start, len);
 }

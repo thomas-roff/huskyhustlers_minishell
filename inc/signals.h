@@ -24,6 +24,6 @@
 # define EXIT_CTRLQ 134 // 134 for 128 + 8 (8 is SIGQUIT)
 
 // SIGNALS
-void	init_ms_signals(int action);
+void	readline_signals_init(int action);
 
 #endif
