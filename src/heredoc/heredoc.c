@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:30 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/22 15:56:37 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/22 16:28:03 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 static int	heredoc_init(char **delimiter, int *fd, t_token *tok, t_tree *tree)
 {
 	if (!ft_superstrndup(delimiter, (char *)tok->tok_chars->data,
-		tok->tok_chars->len, tree->a_buf))
+			tok->tok_chars->len, tree->a_buf))
 		exit_parser(tree, MSG_MALLOCF);
 	if (!vec_reset(tok->tok_chars))
 		exit_parser(tree, MSG_UNINTAL);
@@ -61,15 +61,13 @@ static int	tokenise_heredoc(t_token *tok, int fd, t_tree *tree)
 			free(line);
 			return (SUCCESS);
 		}
-		if (!vec_from(tmp, line, ft_strlen(line), sizeof(char)))
-			exit_parser(tree, MSG_MALLOCF);
-		if (!vec_append(tok->tok_chars, tmp))
+		if (!vec_from(tmp, line, ft_strlen(line), sizeof(char))
+			|| !vec_append(tok->tok_chars, tmp))
 			exit_parser(tree, MSG_MALLOCF);
 		if (!vec_reset(tmp))
 			exit_parser(tree, MSG_UNINTAL);
 		free(line);
 	}
-	return (SUCCESS);
 }
 
 static int	heredoc_exit(int fd, t_tree *tree)
@@ -98,7 +96,6 @@ int	heredoc(t_token *tok, t_tree *tree)
 		line = readline("> ");
 		if (!line || ft_strncmp(line, delimiter, ft_strlen(line)) == 0)
 		{
-			// ft_putchar_fd('\0', fd);
 			if (!heredoc_reset(tree, &line)
 				|| !tokenise_heredoc(tok, fd, tree)
 				|| !heredoc_exit(fd, tree))
