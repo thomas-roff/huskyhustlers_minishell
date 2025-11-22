@@ -10,6 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef MESSAGES_H
+# define MESSAGES_H
+
 // ERROR MESSAGES
 # define MSG_OPENQUO "syntax error unmatched quotes"
 # define MSG_SYX_GRE "syntax error near unexpected token '>'"
@@ -23,3 +26,5 @@
 # define MSG_ACCESSF "cannot access file"
 # define MSG_PATHERR "cannot access linked file"
 # define MSG_OPENERR "failed to open file"
+
+#endif

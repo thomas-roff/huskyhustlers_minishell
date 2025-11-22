@@ -22,7 +22,7 @@
 # include <sys/stat.h>
 
 extern volatile sig_atomic_t	g_receipt;
-typedef struct s_token t_token;
+typedef struct s_token			t_token;
 
 // EMPTY READ (NOTHING TO BE DONE)
 # define EMPTY -1
@@ -64,7 +64,7 @@ char	*envp_get(char *find, t_tree *tree);
 
 // UTILS
 int		ft_superstrdup(char **dst, const char *src, t_arena *arena);
-int		ft_superstrndup(char **dst, const char *src, size_t len, t_arena *arena);
+int		ft_superstrndup(char **dst, const char *src, size_t len, t_arena *a);
 
 // PRINTING
 void	print_tokens(t_vec *tokens);
