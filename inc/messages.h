@@ -1,14 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   messsages.h                                        :+:      :+:    :+:   */
+/*   messages.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/15 12:40:36 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/15 13:23:14 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/20 16:56:14 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#ifndef MESSAGES_H
+# define MESSAGES_H
 
 // ERROR MESSAGES
 # define MSG_OPENQUO "syntax error unmatched quotes"
@@ -23,3 +26,5 @@
 # define MSG_ACCESSF "cannot access file"
 # define MSG_PATHERR "cannot access linked file"
 # define MSG_OPENERR "failed to open file"
+
+#endif

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   envp.c                                             :+:      :+:    :+:   */
+/*   envp_pop_get.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 20:39:44 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/18 17:07:51 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/20 11:47:12 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,14 +48,14 @@ int	envp_export(char ***dst, t_tree *tree)
 		return (FAIL);
 	if (!tree->envp || tree->envp->len == 0)
 		return (SUCCESS);
-	if (!ft_arena_alloc(tree->arena, (void **)&new,
+	if (!ft_arena_alloc(tree->a_buf, (void **)&new,
 			(tree->envp->len + 1) * sizeof(char *)))
 		return (FAIL);
 	while (i < tree->envp->len)
 	{
 		new[i] = NULL;
 		if (!envp_export_helper(&new[i],
-				*(const t_keyval **)vec_get(tree->envp, i), tree->arena))
+				*(const t_keyval **)vec_get(tree->envp, i), tree->a_buf))
 			return (FAIL);
 		i++;
 	}

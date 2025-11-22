@@ -43,18 +43,15 @@ void	print_tokens(t_vec *tokens)
 	write(1, "\n", 1);
 }
 
-void	print_envp(t_vec *envp)
+void	print_envp(t_tree *tree)
 {
-	char	*tmp;
-	size_t	i;
+	char	**export;
 
-	i = 0;
-	if (!envp)
-		return ;
-	while (i < envp->len)
-	{
-		tmp = *(char **)vec_get(envp, i);
-		ft_printf("%s\n", tmp);
-		i++;
-	}
+	export = NULL;
+	write(1, "\n", 1);
+	if (!envp_export(&export, tree))
+		exit_parser(tree, MSG_MALLOCF);
+	while (*export)
+		ft_printf("%s\n", *export++);
+	write(1, "\n", 1);
 }

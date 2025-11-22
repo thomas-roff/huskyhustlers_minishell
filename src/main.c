@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 17:58:39 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/18 17:12:44 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/22 15:59:27 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,36 +17,49 @@
 
 extern volatile sig_atomic_t	g_receipt;
 
-static int	parse_args(int argc, char **argv, t_flag *mode_flag);
+static int	handle_flags(int argc, char **argv, t_flag *mode_flag);
 static int	minishell(char **envp, t_flag mode_flag);
-static void	init_minishell(t_tree *tree);
-static int	reset_minishell(t_tree *tree, char **line);
+static void	minishell_init(t_tree *tree);
+static int	minishell_reset(t_tree *tree, char **line);
+static int	minishell_exit(t_tree *tree, char **line);
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_flag	mode_flag;
-	// sig_init();
 	mode_flag = FLAG_DEFAULT;
 	if (argc > 1)
-		if (!parse_args(argc, argv, &mode_flag))
+		if (!handle_flags(argc, argv, &mode_flag))
 			return (EXIT_SUCCESS);
 	if (!minishell(envp, mode_flag))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
-static int	parse_args(int argc, char **argv, t_flag *mode_flag)
+static int	handle_flags(int argc, char **argv, t_flag *mode_flag)
 {
-	if (argc > 2 || (ft_strcmp(argv[1], "-debug")
-			&& ft_strcmp(argv[1], "-envp")))
+	int		i;
+	t_flag	tmp;
+
+	if (argc == 1)
+		return (SUCCESS);
+	i = 1;
+	while (i < argc)
 	{
-		ft_putendl_fd(MSG_FLAGPMT, 2);
-		return (FAIL);
+		tmp = FLAG_DEFAULT;
+		if (ft_strcmp(argv[i], "-debug") && ft_strcmp(argv[i], "-envp"))
+		{
+			ft_putendl_fd(MSG_FLAGPMT, 2);
+			return (FAIL);
+		}
+		if (!ft_strcmp(argv[i], "-debug"))
+			tmp = FLAG_DEBUG;
+		else if (!ft_strcmp(argv[i], "-envp"))
+			tmp = FLAG_ENVP;
+		if (tmp == *mode_flag)
+			return (FAIL);
+		*mode_flag += tmp;
+		i++;
 	}
-	if (!ft_strcmp(argv[1], "-debug"))
-		*mode_flag = FLAG_DEBUG;
-	else if (!ft_strcmp(argv[1], "-envp"))
-		*mode_flag = FLAG_ENVP;
 	return (SUCCESS);
 }
 
@@ -55,43 +68,63 @@ static int	minishell(char **envp, t_flag mode_flag)
 	char	*line;
 	t_tree	tree;
 
+	readline_signals_init(TURN_ON);
+	minishell_init(&tree);
 	line = NULL;
-	// TODO: Build ctrl-C, D and \ handling
-	// init_signals();
-	init_minishell(&tree);
 	while (1)
 	{
-		if (!reset_minishell(&tree, &line))
+		if (!minishell_reset(&tree, &line))
 			return (FAIL);
 		line = readline("cmd> ");
 		add_history(line);
-		if (ft_strncmp(line, "exit", ft_strlen(line)) == 0)
+		if (!line || ft_strncmp(line, "exit", ft_strlen(line)) == 0)
 		{
-			if (!reset_minishell(&tree, &line))
+			if (!minishell_exit(&tree, &line))
 				return (FAIL);
-			if (mode_flag == FLAG_DEBUG)
-				ft_print_arena_list(tree.arena);
+			if (mode_flag == FLAG_DEBUG || mode_flag == FLAG_DEBUG_ENVP)
+				ft_print_arena_list(tree.a_buf);
 			return (SUCCESS);
 		}
 		parser(&tree, line, mode_flag);
 		if (!tree.envp)
-			envp_init(&tree, envp, mode_flag);
+			envp_init(&tree, envp);
 		// TODO: space for executor to run in minishell loop
 		// executor(&tree, mode_flag);
+		if (mode_flag == FLAG_ENVP || mode_flag == FLAG_DEBUG_ENVP)
+			print_envp(&tree);
 	}
 }
 
-static void	init_minishell(t_tree *tree)
+static void	minishell_init(t_tree *tree)
 {
+	g_receipt = 0;
 	tree->cmd_tab = NULL;
 	tree->envp = NULL;
-	tree->arena = NULL;
+	tree->a_buf = NULL;
+	tree->a_sys = NULL;
 }
 
-static int	reset_minishell(t_tree *tree, char **line)
+static int	minishell_reset(t_tree *tree, char **line)
 {
-	if (tree->arena)
-		if (!ft_arena_list_free(&tree->arena))
+	if (tree->a_buf)
+		if (!ft_arena_list_free(&tree->a_buf))
+			return (ft_perror(MSG_MALLOCF));
+	tree->cmd_tab = NULL;
+	if (*line)
+	{
+		free(*line);
+		*line = NULL;
+	}
+	return (SUCCESS);
+}
+
+static int	minishell_exit(t_tree *tree, char **line)
+{
+	if (tree->a_buf)
+		if (!ft_arena_list_free(&tree->a_buf))
+			return (ft_perror(MSG_MALLOCF));
+	if (tree->a_sys)
+		if (!ft_arena_list_free(&tree->a_sys))
 			return (ft_perror(MSG_MALLOCF));
 	tree->cmd_tab = NULL;
 	if (*line)
