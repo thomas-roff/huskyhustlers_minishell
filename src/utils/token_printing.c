@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 16:17:20 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/13 16:56:51 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/22 12:34:58 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,8 @@ static void	print_rdr(t_redirect rdr)
 		ft_printf("RDR_APPEND ");
 	if (rdr == RDR_READ)
 		ft_printf("RDR_READ ");
+	if (rdr == RDR_DELIMITER)
+		ft_printf("RDR_DELIMITER ");
 	if (rdr == RDR_HEREDOC)
 		ft_printf("RDR_HEREDOC ");
 }

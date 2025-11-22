@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 10:14:19 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/20 11:48:41 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/22 12:40:46 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,10 @@ typedef enum e_tok_type
 	TOK_DEFAULT,
 	TOK_COMMAND,
 	TOK_WORD,
-	TOK_QUOTATION, // Quote or escape character
-	TOK_REDIRECT, // Redirect operato
+	TOK_QUOTATION,
+	TOK_REDIRECT,
 	TOK_IO,
+	TOK_HEREDOC,
 	TOK_PIPE,
 }	t_tok_type;
 
@@ -45,6 +46,7 @@ typedef enum e_redirect
 	RDR_WRITE,
 	RDR_APPEND,
 	RDR_READ,
+	RDR_DELIMITER,
 	RDR_HEREDOC,
 }	t_redirect;
 
@@ -76,6 +78,9 @@ int		valid_input(char *line);
 // TOKENISER
 void	tokenise(t_token *tok, t_redirect *rdr_flag, char *line, t_tree *tree);
 void	tokenise_redirect(t_token *tok, char *line);
+
+// HEREDOC
+void	heredoc(t_token *tok, t_tree *tree);
 
 // EXPANDER
 void	expandise(t_token *token, t_tree *tree);

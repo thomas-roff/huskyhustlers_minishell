@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/13 17:46:24 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/20 16:52:33 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/22 12:19:40 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 static void	handle_sig(int signo, siginfo_t *info, void *context)
 {
+	(void)signo;
 	(void)context;
+	(void)info;
 	g_receipt = EXIT_CTRLC;
 	write(1, "\n", 1);
 	rl_on_new_line();

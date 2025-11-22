@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ms_signals.c                                       :+:      :+:    :+:   */
+/*   readline_signals_init.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/13 17:46:24 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/20 17:06:52 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/22 12:19:20 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 static void	handle_sig(int signo, siginfo_t *info, void *context)
 {
 	(void)context;
+	(void)info;
 	if (signo == SIGINT)
 	{
 		g_receipt = EXIT_CTRLC;
