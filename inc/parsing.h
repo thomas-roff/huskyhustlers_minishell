@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 10:14:19 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/22 14:37:43 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/23 18:07:11 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ typedef struct s_token
 	char		quote_char;
 	bool		expand;
 	size_t		read_size;
+	char		*heredoc;
 }	t_token;
 
 typedef struct s_cmdv
@@ -72,7 +73,7 @@ typedef struct s_cmdv
 }	t_cmdv;
 
 // PARSING
-int		parser(t_tree *tree, char *line, t_flag flag);
+int		parser(t_tree *tree, char **line, t_flag flag);
 
 // INPUT VALIDATION
 int		valid_input(char *line);

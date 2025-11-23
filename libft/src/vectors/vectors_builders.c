@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/15 10:23:38 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/04 19:47:35 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/23 19:21:21 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,7 @@ int	vec_copy(t_vec *dst, t_vec *src)
 
 	if (!dst || !src)
 		return (FAIL);
-	if (dst == src || dst->elem_size != src->elem_size || dst->elem_size == 0
-		|| src->elem_size == 0 || !dst->data || !src->data)
+	if (dst == src || src->elem_size == 0 || !src->data)
 		return (FAIL);
 	if (src->len == 0)
 		return (SUCCESS);

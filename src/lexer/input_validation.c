@@ -23,6 +23,8 @@ int	valid_input(char *line)
 	size_t	i;
 	char	quote;
 
+	if (!line)
+		return (FAIL);
 	len = ft_strlen(line);
 	i = 0;
 	quote = '\0';

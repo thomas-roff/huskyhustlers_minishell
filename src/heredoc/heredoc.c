@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:30 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/22 16:28:03 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/23 19:33:53 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,29 @@ static int	heredoc_exit(int fd, t_tree *tree)
 	return (SUCCESS);
 }
 
+static int	ms_history_append(t_token *tok, char *line, t_tree *tree)
+{
+	t_vec	*tmp_a;
+	t_vec	*tmp_b;
+	char	nl;
+
+	tmp_a = NULL;
+	tmp_b = NULL;
+	nl = '\n';
+	if (!vec_alloc(&tmp_a, tree->a_buf)
+		|| !vec_alloc(&tmp_b, tree->a_buf)
+		|| !vec_new(tmp_a, 0, sizeof(char))
+		|| !vec_append(tmp_a, tok->tok_chars)
+		|| !vec_push(tmp_a, &nl)
+		|| !vec_from(tmp_b, line, ft_strlen(line), sizeof(char))
+		|| !vec_append(tmp_a, tmp_b))
+		exit_parser(tree, MSG_MALLOCF);
+	if (!ft_superstrndup(&tok->heredoc, (char *)tmp_a->data,
+		tmp_a->len, tree->a_buf))
+		exit_parser(tree, MSG_MALLOCF);
+	return (SUCCESS);
+}
+
 int	heredoc(t_token *tok, t_tree *tree)
 {
 	char	*line;
@@ -96,10 +119,12 @@ int	heredoc(t_token *tok, t_tree *tree)
 		if (!heredoc_reset(tree, &line))
 			return (FAIL);
 		line = readline("> ");
-		if (!line || ft_strncmp(line, delimiter, ft_strlen(line)) == 0)
+		if (*line != '\0'
+			&& (!line || ft_strncmp(line, delimiter, ft_strlen(line)) == 0))
 		{
-			if (!heredoc_reset(tree, &line)
-				|| !tokenise_heredoc(tok, fd, tree)
+			if (!tokenise_heredoc(tok, fd, tree)
+				|| !ms_history_append(tok, line, tree)
+				|| !heredoc_reset(tree, &line)
 				|| !heredoc_exit(fd, tree))
 				return (FAIL);
 			return (SUCCESS);

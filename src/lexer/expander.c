@@ -22,7 +22,8 @@ void	expandise(t_token *tok, t_tree *tree)
 	t_vec	*tmp;
 	size_t	i;
 
-	if (!tok || !tok->tok_chars || tok->tok_chars->len == 0)
+	if (!tok || tok->expand == false
+		|| !tok->tok_chars || tok->tok_chars->len == 0)
 		return ;
 	tmp = NULL;
 	i = 0;
@@ -44,10 +45,8 @@ void	expandise(t_token *tok, t_tree *tree)
 static size_t	expand_parse(t_token *tok, t_vec *tmp, size_t i, t_tree *tree)
 {
 	size_t	len;
-	char	null;
 
 	len = expand_len(tok, i);
-	null = '\0';
 	if (len == 0)
 	{
 		if (!vec_trim(tok->tok_chars, i, 1))
@@ -55,7 +54,7 @@ static size_t	expand_parse(t_token *tok, t_vec *tmp, size_t i, t_tree *tree)
 		return (0);
 	}
 	if (!vec_from(tmp, vec_get(tok->tok_chars, i + 1), len, sizeof(char))
-		|| !vec_push(tmp, &null)
+		|| !vec_push(tmp, &(char){0})
 		|| !vec_trim(tok->tok_chars, i, len + 1))
 		exit_parser(tree, MSG_MALLOCF);
 	if (!expand_env_var(tmp, tree))
@@ -94,4 +93,3 @@ static int	expand_env_var(t_vec *tmp, t_tree *tree)
 		exit_parser(tree, MSG_MALLOCF);
 	return (SUCCESS);
 }
-

@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 11:50:59 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/22 15:44:38 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/23 18:56:56 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,10 @@ void	tokenise(t_token *tok, t_redirect *rdr_flag, char *line, t_tree *tree)
 		tokenise_word(tok, line + i, tree);
 	tokenise_io_pair(tok, rdr_flag);
 	if (tok->type == TOK_IO && tok->redirect == RDR_HEREDOC)
+	{
 		heredoc(tok, tree);
+		// ft_printf("heredoc line: %s\n", tok->heredoc);
+	}
 	tok->read_size += i;
 }
 

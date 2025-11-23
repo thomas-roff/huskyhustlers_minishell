@@ -6,7 +6,7 @@
 /*   By: thblack- <thblack-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 17:58:39 by thblack-          #+#    #+#             */
-/*   Updated: 2025/11/22 15:59:27 by thblack-         ###   ########.fr       */
+/*   Updated: 2025/11/23 19:36:10 by thblack-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,8 @@ static int	minishell(char **envp, t_flag mode_flag)
 		if (!minishell_reset(&tree, &line))
 			return (FAIL);
 		line = readline("cmd> ");
-		add_history(line);
-		if (!line || ft_strncmp(line, "exit", ft_strlen(line)) == 0)
+		if (*line != '\0'
+			&& (!line || ft_strncmp(line, "exit", ft_strlen(line)) == 0))
 		{
 			if (!minishell_exit(&tree, &line))
 				return (FAIL);
@@ -85,7 +85,7 @@ static int	minishell(char **envp, t_flag mode_flag)
 				ft_print_arena_list(tree.a_buf);
 			return (SUCCESS);
 		}
-		parser(&tree, line, mode_flag);
+		parser(&tree, &line, mode_flag);
 		if (!tree.envp)
 			envp_init(&tree, envp);
 		// TODO: space for executor to run in minishell loop
@@ -132,5 +132,6 @@ static int	minishell_exit(t_tree *tree, char **line)
 		free(*line);
 		*line = NULL;
 	}
+	rl_clear_history();
 	return (SUCCESS);
 }
