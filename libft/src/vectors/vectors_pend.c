@@ -90,7 +90,7 @@ int	vec_inpend(t_vec *dst, t_vec *src, size_t after)
 			(uint8_t *)dst->data + after * dst->elem_size, dst_bytes);
 	}
 	ft_memcpy((uint8_t *)dst->data + after * dst->elem_size,
-		(uint8_t *)src->data, src->len * dst->elem_size);
+		(uint8_t *)src->data, src_bytes);
 	dst->len += src->len;
 	return (SUCCESS);
 }

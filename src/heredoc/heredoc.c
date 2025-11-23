@@ -15,6 +15,8 @@
 
 static int	heredoc_init(char **delimiter, int *fd, t_token *tok, t_tree *tree)
 {
+	if (tok->quote_type == QUO_DEFAULT)
+		tok->expand = true;
 	if (!ft_superstrndup(delimiter, (char *)tok->tok_chars->data,
 			tok->tok_chars->len, tree->a_buf))
 		exit_parser(tree, MSG_MALLOCF);
