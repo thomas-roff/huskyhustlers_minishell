@@ -11,7 +11,9 @@
 /* ************************************************************************** */
 
 #include "../../inc/signals.h"
-// #include "../../inc/minishell.h"
+#include "../../inc/minishell.h"
+
+volatile sig_atomic_t	g_receipt;
 
 static void	handle_sig(int signo, siginfo_t *info, void *context)
 {
@@ -21,8 +23,8 @@ static void	handle_sig(int signo, siginfo_t *info, void *context)
 	{
 		g_receipt = EXIT_CTRLC;
 		write(1, "\n", 1);
-		rl_on_new_line();
 		rl_replace_line("", 0);
+		rl_on_new_line();
 		rl_redisplay();
 	}
 	if (signo == SIGQUIT)
@@ -34,10 +36,11 @@ static void	handle_sig(int signo, siginfo_t *info, void *context)
 	}
 }
 
-void	readline_signals_init(int action)
+void	readline_signals_hook(int action)
 {
 	struct sigaction	act;
 
+	g_receipt = 0;
 	ft_memset(&act, 0, sizeof(act));
 	if (action == TURN_ON)
 	{

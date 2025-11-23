@@ -11,10 +11,12 @@
 /* ************************************************************************** */
 
 #include "../../inc/parsing.h"
-#include <fcntl.h>
+#include "../../inc/signals.h"
 
 static int	heredoc_init(char **delimiter, int *fd, t_token *tok, t_tree *tree)
 {
+	readline_signals_hook(TURN_OFF);
+	heredoc_signals_hook(TURN_ON);
 	if (tok->quote_type == QUO_DEFAULT)
 		tok->expand = true;
 	if (!ft_superstrndup(delimiter, (char *)tok->tok_chars->data,
@@ -77,6 +79,8 @@ static int	heredoc_exit(int fd, t_tree *tree)
 	if (fd)
 		if (close(fd) < 0 || unlink("/tmp/heredoc_tmp") < 0)
 			exit_parser(tree, MSG_ACCESSF);
+	heredoc_signals_hook(TURN_OFF);
+	readline_signals_hook(TURN_ON);
 	return (SUCCESS);
 }
 
@@ -92,14 +96,35 @@ static int	ms_history_append(t_token *tok, char *line, t_tree *tree)
 	if (!vec_alloc(&tmp_a, tree->a_buf)
 		|| !vec_alloc(&tmp_b, tree->a_buf)
 		|| !vec_new(tmp_a, 0, sizeof(char))
-		|| !vec_append(tmp_a, tok->tok_chars)
-		|| !vec_push(tmp_a, &nl)
-		|| !vec_from(tmp_b, line, ft_strlen(line), sizeof(char))
-		|| !vec_append(tmp_a, tmp_b))
+		|| !vec_append(tmp_a, tok->tok_chars))
+		exit_parser(tree, MSG_MALLOCF);
+	if (line)
+		if (!vec_push(tmp_a, &nl)
+			|| !vec_from(tmp_b, line, ft_strlen(line), sizeof(char))
+			|| !vec_append(tmp_a, tmp_b))
 		exit_parser(tree, MSG_MALLOCF);
 	if (!ft_superstrndup(&tok->heredoc, (char *)tmp_a->data,
 		tmp_a->len, tree->a_buf))
 		exit_parser(tree, MSG_MALLOCF);
+	return (SUCCESS);
+}
+
+int	heredoc_clean_exit(t_token *tok, int fd, char *line, t_tree *tree)
+{
+	if (!tokenise_heredoc(tok, fd, tree)
+		|| !ms_history_append(tok, line, tree)
+		|| !heredoc_reset(tree, &line)
+		|| !heredoc_exit(fd, tree))
+		return (FAIL);
+	// rl_clear_history();
+	return (SUCCESS);
+}
+
+int	heredoc_dirty_exit(int fd, char *line, t_tree *tree)
+{
+	heredoc_reset(tree, &line);
+	heredoc_exit(fd, tree);
+	// rl_clear_history();
 	return (SUCCESS);
 }
 
@@ -116,19 +141,16 @@ int	heredoc(t_token *tok, t_tree *tree)
 		return (FAIL);
 	while (1)
 	{
-		if (!heredoc_reset(tree, &line))
-			return (FAIL);
+		heredoc_reset(tree, &line);
+		if (g_receipt == EXIT_CTRLC)
+			return (heredoc_dirty_exit(fd, line, tree));
 		line = readline("> ");
-		if (*line != '\0'
-			&& (!line || ft_strncmp(line, delimiter, ft_strlen(line)) == 0))
-		{
-			if (!tokenise_heredoc(tok, fd, tree)
-				|| !ms_history_append(tok, line, tree)
-				|| !heredoc_reset(tree, &line)
-				|| !heredoc_exit(fd, tree))
-				return (FAIL);
-			return (SUCCESS);
-		}
+		if (g_receipt == EXIT_CTRLC)
+			return (heredoc_dirty_exit(fd, line, tree));
+		if (line && ft_strlen(line) == 0)
+			continue ;
+		else if (line == NULL || ft_strcmp(line, delimiter) == 0)
+			return (heredoc_clean_exit(tok, fd, line, tree));
 		ft_putendl_fd(line, fd);
 	}
 }

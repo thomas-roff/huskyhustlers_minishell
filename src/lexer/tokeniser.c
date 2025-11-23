@@ -35,6 +35,9 @@ void	tokenise(t_token *tok, t_redirect *rdr_flag, char *line, t_tree *tree)
 	if (tok->type == TOK_IO && tok->redirect == RDR_HEREDOC)
 	{
 		heredoc(tok, tree);
+		// rl_replace_line("", 0);
+		// rl_on_new_line();
+		// rl_redisplay();
 		// ft_printf("heredoc line: %s\n", tok->heredoc);
 	}
 	tok->read_size += i;

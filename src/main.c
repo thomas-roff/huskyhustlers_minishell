@@ -68,7 +68,7 @@ static int	minishell(char **envp, t_flag mode_flag)
 	char	*line;
 	t_tree	tree;
 
-	readline_signals_init(TURN_ON);
+	readline_signals_hook(TURN_ON);
 	minishell_init(&tree);
 	line = NULL;
 	while (1)
@@ -76,8 +76,9 @@ static int	minishell(char **envp, t_flag mode_flag)
 		if (!minishell_reset(&tree, &line))
 			return (FAIL);
 		line = readline("cmd> ");
-		if (*line != '\0'
-			&& (!line || ft_strncmp(line, "exit", ft_strlen(line)) == 0))
+		if (line && ft_strlen(line) == 0)
+			continue ;
+		else if (line == NULL || ft_strcmp(line, "exit") == 0)
 		{
 			if (!minishell_exit(&tree, &line))
 				return (FAIL);
