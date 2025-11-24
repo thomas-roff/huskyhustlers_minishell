@@ -15,39 +15,39 @@
 
 static void	tok_init(t_token **tok, t_vec *tokens, t_tree *tree);
 static bool	ft_nothingtodo(char **line);
-static int	lexer_init(t_vec **tokens, t_vec **linec, char *line, t_tree *tree);
-static void	ft_rl_append(t_vec *linec, t_token *tok, char *line, t_tree *tree);
-static void	ft_add_history(char **line, t_vec *linec, t_tree *tree);
+static int	lexer_init(t_vec **tokens, t_vec **rladd, char *line, t_tree *tree);
+static void	ft_rl_append(t_vec *linec, t_token *tok, t_tree *tree);
+static void	ft_add_history(char **line, t_vec *rladd, t_tree *tree);
 
 int	parser(t_tree *tree, char **line, t_flag mode_flag)
 {
 	t_vec		*toks;
 	t_token		*tok;
-	t_vec		*linec;
-	char		*linep;
+	t_vec		*rladd;
+	char		*linec;
 	t_redirect	rdr_flag;
 
 	toks = NULL;
 	tok = NULL;
-	linec = NULL;
-	linep = *line;
-	if (!tree || !valid_input(*line) || !lexer_init(&toks, &linec, *line, tree))
+	rladd = NULL;
+	linec = *line;
+	if (!tree || !valid_input(*line) || !lexer_init(&toks, &rladd, *line, tree))
 		return (FAIL);
 	if (ft_nothingtodo(line))
 		return (SUCCESS);
 	rdr_flag = RDR_DEFAULT;
-	while (*linep)
+	while (*linec)
 	{
 		tok_init(&tok, toks, tree);
-		tokenise(tok, &rdr_flag, linep, tree);
-		ft_rl_append(linec, tok, linep, tree);
+		tokenise(tok, &rdr_flag, linec, tree);
+		ft_rl_append(rladd, tok, tree);
 		expandise(tok, tree);
-		linep += tok->read_size;
+		linec += tok->read_size;
 	}
 	commandise(tree, toks);
 	if (mode_flag == FLAG_DEBUG || mode_flag == FLAG_DEBUG_ENVP)
 		print_debugging(toks, tree);
-	ft_add_history(line, linec, tree);
+	ft_add_history(line, rladd, tree);
 	return (SUCCESS);
 }
 
@@ -82,36 +82,37 @@ static bool	ft_nothingtodo(char **line)
 	return (false);
 }
 
-static int	lexer_init(t_vec **tokens, t_vec **linec, char *line, t_tree *tree)
+static int	lexer_init(t_vec **tokens, t_vec **rladd, char *line, t_tree *tree)
 {
 	if (!tokens || !tree)
 		exit_parser(tree, MSG_UNINTAL);
 	if (!ft_arena_init(&tree->a_buf, ARENA_BUF)
 		|| !vec_alloc(tokens, tree->a_buf)
 		|| !vec_new(*tokens, 0, sizeof(t_token *))
-		|| !vec_alloc(linec, tree->a_buf)
-		|| !vec_from(*linec, line, ft_strlen(line), sizeof(char)))
+		|| !vec_alloc(rladd, tree->a_buf)
+		|| !vec_from(*rladd, line, ft_strlen(line), sizeof(char))
+		|| !vec_alloc(&tree->fds, tree->a_buf)
+		|| !vec_new(tree->fds, 0, sizeof(int)))
 		exit_parser(tree, MSG_MALLOCF);
 	return (SUCCESS);
 }
 
-static void ft_rl_append(t_vec *linec, t_token *tok, char *line, t_tree *tree)
+static void ft_rl_append(t_vec *rladd, t_token *tok, t_tree *tree)
 {
 	t_vec	*tmp;
 	char	nl;
 
 	if (!tok->heredoc)
 		return ;
-	(void)line;
 	tmp = NULL;
 	nl = '\n';
 	if (!vec_alloc(&tmp, tree->a_buf))
 		exit_parser(tree, MSG_MALLOCF);
 	if (!vec_from(tmp, tok->heredoc, ft_strlen(tok->heredoc), sizeof(char)))
 		exit_parser(tree, MSG_MALLOCF);
-	if (!vec_push(linec, &nl))
+	if (!vec_push(rladd, &nl))
 		exit_parser(tree, MSG_MALLOCF);
-	if (!vec_append(linec, tmp))
+	if (!vec_append(rladd, tmp))
 		exit_parser(tree, MSG_MALLOCF);
 	return ;
 }

@@ -12,8 +12,6 @@
 
 #include "../../inc/signals.h"
 
-volatile sig_atomic_t	g_receipt;
-
 static void	handle_sig(int signo, siginfo_t *info, void *context)
 {
 	(void)context;

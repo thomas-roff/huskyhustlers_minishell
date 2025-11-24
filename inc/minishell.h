@@ -20,6 +20,7 @@
 # include <readline/history.h>
 # include <signal.h>
 # include <sys/stat.h>
+# include <sys/wait.h>
 
 extern volatile sig_atomic_t	g_receipt;
 typedef struct s_token			t_token;
@@ -56,6 +57,7 @@ typedef struct s_tree
 	t_vec	*envp;
 	t_arena	*a_sys;
 	t_arena	*a_buf;
+	t_vec	*fds;
 }	t_tree;
 
 // ENVIRONMENT

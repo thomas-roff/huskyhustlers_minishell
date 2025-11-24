@@ -103,10 +103,12 @@ static void	minishell_init(t_tree *tree)
 	tree->envp = NULL;
 	tree->a_buf = NULL;
 	tree->a_sys = NULL;
+	tree->fds = NULL;
 }
 
 static int	minishell_reset(t_tree *tree, char **line)
 {
+	g_receipt = 0;
 	if (tree->a_buf)
 		if (!ft_arena_list_free(&tree->a_buf))
 			return (ft_perror(MSG_MALLOCF));

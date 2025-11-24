@@ -12,30 +12,16 @@
 
 #include "../../inc/signals.h"
 
-volatile sig_atomic_t	g_receipt;
-
-static void	handle_sig(int signo, siginfo_t *info, void *context)
-{
-	(void)signo;
-	(void)context;
-	(void)info;
-	write(STDOUT_FILENO, "\n", 1);
-	g_receipt = EXIT_CTRLC;
-	// write(1, "hd exit\n", 8);
-	rl_replace_line("", 0);
-	rl_on_new_line();
-	// rl_clear_history();
-	// rl_redisplay();
-}
+static void	handle_sig(int signo, siginfo_t *info, void *context);
 
 void	heredoc_signals_hook(int action)
 {
 	struct sigaction	act;
 
-	g_receipt = 0;
 	ft_memset(&act, 0, sizeof(act));
 	if (action == TURN_ON)
 	{
+		g_receipt = 0;
 		act.sa_sigaction = handle_sig;
 		sigemptyset(&act.sa_mask);
 		sigaddset(&act.sa_mask, SIGINT);
@@ -47,4 +33,23 @@ void	heredoc_signals_hook(int action)
 		act.sa_handler = SIG_DFL;
 		act.sa_flags = SA_RESTART;
 	}
+}
+
+static void	handle_sig(int signo, siginfo_t *info, void *context)
+{
+	(void)signo;
+	(void)context;
+	(void)info;
+	write(STDOUT_FILENO, "\n", 1);
+	write(STDOUT_FILENO, "I got here\n", 11);
+	g_receipt = EXIT_CTRLC;
+	rl_clear_history();
+	if (kill(info->si_pid, SIGTERM) == -1)
+		exit(EXIT_FAILURE);
+	// write(1, "hd exit\n", 8);
+	// rl_replace_line("", 0);
+	// rl_on_new_line();
+	// rl_clear_history();
+	// rl_redisplay();
+	// heredoc_signals_hook(TURN_OFF);
 }

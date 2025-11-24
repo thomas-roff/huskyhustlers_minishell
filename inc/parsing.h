@@ -84,6 +84,7 @@ void	tokenise_redirect(t_token *tok, char *line);
 
 // HEREDOC
 int		heredoc(t_token *tok, t_tree *tree);
+int		heredoc_fork(t_token *tok, t_tree *tree);
 
 // EXPANDER
 void	expandise(t_token *token, t_tree *tree);

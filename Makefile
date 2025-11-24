@@ -40,14 +40,14 @@ OBJ_DIRS	= $(sort $(dir $(OBJ)))
 DEPS		= $(OBJ:.o=.d)
 
 # MAC COMPATIBILITY
-UNAME		= $(shell uname)
-ifeq ($(UNAME), Darwin)
-	RL_INC	= -I/usr/local/opt/readline/include
-	RL_LIB	= -L/usr/local/opt/readline/lib -Wl,-rpath,/usr/local/opt/readline/lib
-else
-	RL_INC	=
-	RL_LIB	=
-endif
+# UNAME		= $(shell uname)
+# ifeq ($(UNAME), Darwin)
+# 	RL_INC	= -I/usr/local/opt/readline/include
+# 	RL_LIB	= -L/usr/local/opt/readline/lib -Wl,-rpath,/usr/local/opt/readline/lib
+# else
+# 	RL_INC	=
+# 	RL_LIB	=
+# endif
 
 # TOOLS
 CC			= cc
@@ -71,9 +71,11 @@ LIBFT_H		= $(LIBFT_DIR)/libft.h
 LIBFT_A		= $(LIBFT_DIR)/libft.a
 
 # INCLUDE PATHS AND LIBRARIES
-INC			= -I. -I$(LIBFT_DIR) -I$(INC_DIR) $(RL_INC)
+INC			= -I. -I$(LIBFT_DIR) -I$(INC_DIR)
+# $(RL_INC)
 LIBFT		= -L$(LIBFT_DIR) -lft
-READLINE	= $(RL_LIB) -lreadline -lncurses
+READLINE	= -lreadline -lncurses
+# $(RL_LIB) 
 LIBS		= $(LIBFT) $(READLINE)
 
 # MESSAGES
