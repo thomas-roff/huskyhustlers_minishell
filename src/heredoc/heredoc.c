@@ -94,8 +94,7 @@ int	heredoc(t_token *tok, t_tree *tree)
 		return (FAIL);
 	while (1)
 	{
-		if (!heredoc_reset(tree, &line))
-			return (FAIL);
+		heredoc_reset(tree, &line);
 		line = readline("> ");
 		if (line && ft_strlen(line) == 0)
 			continue ;
