@@ -14,6 +14,8 @@
 #include "../inc/signals.h"
 #include "../inc/parsing.h"
 #include "../inc/execution.h"
+#include <readline/readline.h>
+#include <stdlib.h>
 
 extern volatile sig_atomic_t	g_receipt;
 
@@ -76,8 +78,9 @@ static int	minishell(char **envp, t_flag mode_flag)
 		if (!minishell_reset(&tree, &line))
 			return (FAIL);
 		line = readline("cmd> ");
-		add_history(line);
-		if (!line || ft_strncmp(line, "exit", ft_strlen(line)) == 0)
+		if (g_receipt == SIGINT || (line && ft_strlen(line) == 0))
+			continue ;
+		else if (!line || ft_strcmp(line, "exit") == 0)
 		{
 			if (!minishell_exit(&tree, &line))
 				return (FAIL);
@@ -85,6 +88,7 @@ static int	minishell(char **envp, t_flag mode_flag)
 				ft_print_arena_list(tree.a_buf);
 			return (SUCCESS);
 		}
+		add_history(line);
 		parser(&tree, line, mode_flag);
 		if (!tree.envp)
 			envp_init(&tree, envp);
@@ -95,6 +99,16 @@ static int	minishell(char **envp, t_flag mode_flag)
 	}
 }
 
+static int	rl_event(void)
+{
+	if (g_receipt == SIGINT)
+	{
+		rl_done = 1;
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+
 static void	minishell_init(t_tree *tree)
 {
 	g_receipt = 0;
@@ -102,10 +116,12 @@ static void	minishell_init(t_tree *tree)
 	tree->envp = NULL;
 	tree->a_buf = NULL;
 	tree->a_sys = NULL;
+	rl_event_hook = rl_event;
 }
 
 static int	minishell_reset(t_tree *tree, char **line)
 {
+	g_receipt = 0;
 	if (tree->a_buf)
 		if (!ft_arena_list_free(&tree->a_buf))
 			return (ft_perror(MSG_MALLOCF));
@@ -132,5 +148,6 @@ static int	minishell_exit(t_tree *tree, char **line)
 		free(*line);
 		*line = NULL;
 	}
+	rl_clear_history();
 	return (SUCCESS);
 }

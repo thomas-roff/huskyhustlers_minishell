@@ -19,15 +19,15 @@ static void	handle_sig(int signo, siginfo_t *info, void *context)
 	(void)info;
 	if (signo == SIGINT)
 	{
-		g_receipt = EXIT_CTRLC;
-		write(1, "\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
+		g_receipt = SIGINT;
+		// write(1, "\n", 1);
+		// rl_on_new_line();
+		// rl_replace_line("", 0);
+		// rl_redisplay();
 	}
 	if (signo == SIGQUIT)
 	{
-		g_receipt = EXIT_CTRLQ;
+		g_receipt = SIGQUIT;
 		// TODO: Figure out which process to kill
 		// if (kill(info->si_pid, SIGSEGV) == -1)
 		// 	exit(EXIT_FAILURE);

@@ -32,6 +32,7 @@ static int	heredoc_init(char **delimiter, int *fd, t_token *tok, t_tree *tree)
 static int	heredoc_reset(t_tree *tree, char **line)
 {
 	(void)tree;
+	g_receipt = 0;
 	if (*line)
 	{
 		free(*line);
@@ -96,7 +97,9 @@ int	heredoc(t_token *tok, t_tree *tree)
 		if (!heredoc_reset(tree, &line))
 			return (FAIL);
 		line = readline("> ");
-		if (!line || ft_strncmp(line, delimiter, ft_strlen(line)) == 0)
+		if (line && ft_strlen(line) == 0)
+			continue ;
+		else if (!line || ft_strcmp(line, delimiter) == 0)
 		{
 			if (!heredoc_reset(tree, &line)
 				|| !tokenise_heredoc(tok, fd, tree)
