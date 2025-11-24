@@ -12,8 +12,6 @@
 
 #include "../../inc/signals.h"
 
-volatile sig_atomic_t	g_receipt;
-
 static void	handle_sig(int signo, siginfo_t *info, void *context)
 {
 	(void)signo;
@@ -21,9 +19,10 @@ static void	handle_sig(int signo, siginfo_t *info, void *context)
 	(void)info;
 	write(STDOUT_FILENO, "\n", 1);
 	g_receipt = EXIT_CTRLC;
+	rl_done = 1;
 	// write(1, "hd exit\n", 8);
-	rl_replace_line("", 0);
-	rl_on_new_line();
+	// rl_replace_line("", 0);
+	// rl_on_new_line();
 	// rl_clear_history();
 	// rl_redisplay();
 }

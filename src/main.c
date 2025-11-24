@@ -14,6 +14,7 @@
 #include "../inc/signals.h"
 #include "../inc/parsing.h"
 #include "../inc/execution.h"
+#include <stdlib.h>
 
 extern volatile sig_atomic_t	g_receipt;
 
@@ -76,7 +77,7 @@ static int	minishell(char **envp, t_flag mode_flag)
 		if (!minishell_reset(&tree, &line))
 			return (FAIL);
 		line = readline("cmd> ");
-		if (line && ft_strlen(line) == 0)
+		if (g_receipt == EXIT_CTRLC || (line && ft_strlen(line) == 0 ))
 			continue ;
 		else if (line == NULL || ft_strcmp(line, "exit") == 0)
 		{
@@ -96,6 +97,16 @@ static int	minishell(char **envp, t_flag mode_flag)
 	}
 }
 
+static int	rl_event(void)
+{
+	if (g_receipt == EXIT_CTRLC)
+	{
+		rl_done = 1;
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+
 static void	minishell_init(t_tree *tree)
 {
 	g_receipt = 0;
@@ -103,10 +114,12 @@ static void	minishell_init(t_tree *tree)
 	tree->envp = NULL;
 	tree->a_buf = NULL;
 	tree->a_sys = NULL;
+	rl_event_hook = rl_event;
 }
 
 static int	minishell_reset(t_tree *tree, char **line)
 {
+	g_receipt = 0;
 	if (tree->a_buf)
 		if (!ft_arena_list_free(&tree->a_buf))
 			return (ft_perror(MSG_MALLOCF));

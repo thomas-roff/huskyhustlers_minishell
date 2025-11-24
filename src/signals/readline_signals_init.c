@@ -13,8 +13,6 @@
 #include "../../inc/signals.h"
 #include "../../inc/minishell.h"
 
-volatile sig_atomic_t	g_receipt;
-
 static void	handle_sig(int signo, siginfo_t *info, void *context)
 {
 	(void)context;
@@ -22,10 +20,10 @@ static void	handle_sig(int signo, siginfo_t *info, void *context)
 	if (signo == SIGINT)
 	{
 		g_receipt = EXIT_CTRLC;
-		write(1, "\n", 1);
-		rl_replace_line("", 0);
-		rl_on_new_line();
-		rl_redisplay();
+		// write(1, "\n", 1);
+		// rl_replace_line("", 0);
+		// rl_on_new_line();
+		// rl_redisplay();
 	}
 	if (signo == SIGQUIT)
 	{

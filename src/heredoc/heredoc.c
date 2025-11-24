@@ -15,8 +15,8 @@
 
 static int	heredoc_init(char **delimiter, int *fd, t_token *tok, t_tree *tree)
 {
-	readline_signals_hook(TURN_OFF);
-	heredoc_signals_hook(TURN_ON);
+	// readline_signals_hook(TURN_OFF);
+	// heredoc_signals_hook(TURN_ON);
 	if (tok->quote_type == QUO_DEFAULT)
 		tok->expand = true;
 	if (!ft_superstrndup(delimiter, (char *)tok->tok_chars->data,
@@ -34,6 +34,7 @@ static int	heredoc_init(char **delimiter, int *fd, t_token *tok, t_tree *tree)
 static int	heredoc_reset(t_tree *tree, char **line)
 {
 	(void)tree;
+	g_receipt = 0;
 	if (*line)
 	{
 		free(*line);
@@ -79,8 +80,6 @@ static int	heredoc_exit(int fd, t_tree *tree)
 	if (fd)
 		if (close(fd) < 0 || unlink("/tmp/heredoc_tmp") < 0)
 			exit_parser(tree, MSG_ACCESSF);
-	heredoc_signals_hook(TURN_OFF);
-	readline_signals_hook(TURN_ON);
 	return (SUCCESS);
 }
 
@@ -116,7 +115,7 @@ int	heredoc_clean_exit(t_token *tok, int fd, char *line, t_tree *tree)
 		|| !heredoc_reset(tree, &line)
 		|| !heredoc_exit(fd, tree))
 		return (FAIL);
-	// rl_clear_history();
+	rl_clear_history();
 	return (SUCCESS);
 }
 
@@ -124,7 +123,7 @@ int	heredoc_dirty_exit(int fd, char *line, t_tree *tree)
 {
 	heredoc_reset(tree, &line);
 	heredoc_exit(fd, tree);
-	// rl_clear_history();
+	rl_clear_history();
 	return (SUCCESS);
 }
 
@@ -142,8 +141,6 @@ int	heredoc(t_token *tok, t_tree *tree)
 	while (1)
 	{
 		heredoc_reset(tree, &line);
-		if (g_receipt == EXIT_CTRLC)
-			return (heredoc_dirty_exit(fd, line, tree));
 		line = readline("> ");
 		if (g_receipt == EXIT_CTRLC)
 			return (heredoc_dirty_exit(fd, line, tree));
