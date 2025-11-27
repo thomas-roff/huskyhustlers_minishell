@@ -39,6 +39,16 @@ OBJ			= $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))
 OBJ_DIRS	= $(sort $(dir $(OBJ)))
 DEPS		= $(OBJ:.o=.d)
 
+# MAC COMPATIBILITY (SEE INC AND LIB CODE TOO)
+# UNAME		= $(shell uname)
+# ifeq ($(UNAME), Darwin)
+# 	RL_INC	= -I/usr/local/opt/readline/include
+# 	RL_LIB	= -L/usr/local/opt/readline/lib -Wl,-rpath,/usr/local/opt/readline/lib
+# else
+# 	RL_INC	=
+# 	RL_LIB	=
+# endif
+
 # TOOLS
 CC			= cc
 CFLAGS		= -Wall -Wextra -Werror
@@ -66,6 +76,12 @@ INC			= -I. -I$(LIBFT_DIR) -I$(LIBFT_DIR)/inc -I$(INC_DIR)
 LIBFT		= -L$(LIBFT_DIR) -lft
 READLINE	= -lreadline -lncurses
 LIBS		= $(LIBFT) $(READLINE)
+
+# # MAC INCLUDE PATHS AND LIBRARIES
+# INC			= -I. $(RL_INC) -I$(LIBFT_DIR) -I$(LIBFT_DIR)/inc -I$(INC_DIR)
+# LIBFT		= -L$(LIBFT_DIR) -lft
+# READLINE	= $(RL_LIB) -lreadline -lncurses
+# LIBS		= $(LIBFT) $(READLINE)
 
 # MESSAGES
 START		= @echo "==== THOMASROFF MAKEFILE =============" \
